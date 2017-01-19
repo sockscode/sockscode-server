@@ -2,7 +2,7 @@ let webpack = require('webpack');
 let WebpackDevServer = require('webpack-dev-server');
 let config = require('./config/webpack.config');
 let path = require('path');
-let server = require('./index.js');
+let server = require('./app.js');
 
 new WebpackDevServer(webpack(config), {
   publicPath: config.output.publicPath,
