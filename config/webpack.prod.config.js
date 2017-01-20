@@ -8,7 +8,7 @@ module.exports = {
         vendor: ['material-ui/styles/MuiThemeProvider', 'react', 'react-dom']
     },
     output: {
-        filename: 'app.js',
+        filename: 'bundle.js',
         publicPath: '/',
         path: path.resolve('dist')
     },
