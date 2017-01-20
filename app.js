@@ -32,6 +32,7 @@ io.on('connection', (socket) => {
 
   socket.on('join room', (roomUuid) => {
     //fixme username?    
+    //fixme what if room was not created?
     if (!roomUuid) {
       return;
     }
