@@ -17,7 +17,13 @@ io.on('connection', (socket) => {
     return socket.roomUuid;
   }
 
+  const leaveRoom = () => {
+    socket.roomUuid && socket.leave(socket.roomUuid);
+    socket.roomUuid = null;
+  }
+
   socket.on('create room', () => {
+    leaveRoom();
     //fixme username?
     socket.roomUuid = uuid.v4();
     socket.join(socket.roomUuid);
@@ -25,10 +31,11 @@ io.on('connection', (socket) => {
   });
 
   socket.on('join room', (roomUuid) => {
-    //fixme username?
-    if (!roomUuid){
+    //fixme username?    
+    if (!roomUuid) {
       return;
     }
+    leaveRoom();
     socket.roomUuid = roomUuid;
     socket.join(socket.roomUuid);
   })
