@@ -47,7 +47,9 @@ export class MonacoEditor extends React.Component<MonacoEditorProps, MonacoEdito
     componentDidUpdate(prevProps: MonacoEditorProps, prevState: MonacoEditorState) {
         if (this.monacoEditor) {
             this.skipNextChangeEvent = true;
+            const position = this.monacoEditor.getPosition();
             this.monacoEditor.getModel().setValue(this.props.code);
+            this.monacoEditor.setPosition(position);
         }
     }
 
