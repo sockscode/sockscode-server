@@ -33,7 +33,7 @@ export class Toolbar extends React.Component<ToolbarProps, ToolbarState>{
 
     render() {
         return <AppBar
-            title={<span>Codesocs mirror</span>}
+            title={<span>Sockscode mirror</span>}
             iconElementLeft={<IconButton><SvgIcon className={styles.logo} viewBox="0 0 200 200">
                 <defs>
                     <pattern id="sock" x="0" y="0" width="90" height="30" patternUnits="userSpaceOnUse">
