@@ -5,3 +5,7 @@
 .button{
     margin: 5px;
 }
+
+.logo:hover{
+    transform: scale(2) rotate(180deg);
+}
