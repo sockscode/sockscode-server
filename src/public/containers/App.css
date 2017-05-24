@@ -5,6 +5,18 @@
     flex-direction: column;
 }
 
+.bottom-container{
+    display: flex;
+    height: 100%;
+    width: 100%;
+}
+
+.file-list{
+    display: flex;
+    min-width: 400px;
+    overflow: auto;
+}
+
 .editor{
     flex-grow: 1;
     display: flex;

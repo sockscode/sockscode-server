@@ -2,6 +2,7 @@ import * as React from 'react'
 import CSSModules from 'react-css-modules';
 import CodeEditor from './editor/CodeEditor';
 import { SockscodeToolbar } from './toolbar/SockscodeToolbar';
+import FileList from './files/FileList';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux'
 import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
@@ -45,8 +46,13 @@ export class App extends React.Component<AppProps, AppState>{
                     <div>
                         <SockscodeToolbar />
                     </div>
-                    <div className={styles.editor}>
-                        <CodeEditor />
+                    <div className={styles['bottom-container']}>
+                        <div className={styles['file-list']}>
+                            <FileList />
+                        </div>
+                        <div className={styles.editor}>
+                            <CodeEditor />
+                        </div>
                     </div>
                 </div>
             </Provider>

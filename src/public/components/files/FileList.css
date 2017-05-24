@@ -1,0 +1,4 @@
+.container{
+    border-right: 1px solid black; /*fixme*/
+    flex-grow: 1;
+}
