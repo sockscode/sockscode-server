@@ -56,7 +56,7 @@
     "ts-loader": "^1.3.3",
     "typescript": "next",
     "vscode-icons": "https://github.com/sockscode/vscode-icons.git",
-    "webpack": "^1.14.0",
+    "webpack": "^2.6.0",
     "webpack-dev-server": "^1.16.2",
     "webpack-notifier": "^1.5.0"
   }

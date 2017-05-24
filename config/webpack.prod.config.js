@@ -13,17 +13,17 @@ module.exports = {
         path: path.resolve('dist')
     },
     resolve: {
-        extensions: ['', '.ts', '.tsx', '.js', '.jsx'],
-        modulesDirectories: ['src/public', 'node_modules'],
+        extensions: ['.ts', '.tsx', '.js', '.jsx'],
+        modules: ['src/public', 'node_modules']        
     },
     module: {
         loaders: [
-            { test: /\.tsx?$/, loaders: ['babel', 'ts-loader'] },
+            { test: /\.tsx?$/, loaders: ['babel-loader', 'ts-loader'] },
             {
                 test: /\.css$/,
                 loaders: [
-                    'style?sourceMap',
-                    'css?modules&importLoaders=1&localIdentName=[path]___[name]__[local]___[hash:base64:5]'
+                    'style-loader?sourceMap',
+                    'css-loader?modules&importLoaders=1&localIdentName=[path]___[name]__[local]___[hash:base64:5]'
                 ]
             }
         ]
