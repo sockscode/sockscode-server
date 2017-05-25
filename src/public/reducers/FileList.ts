@@ -2,10 +2,11 @@ import { } from '../actions/Actions';
 
 export interface File {
     filename: string,
-    isSelected: boolean,
-    isOpen: boolean,
-    isDirectory: boolean,
-    isExpanded: boolean,
+    isSelected?: boolean,
+    isOpen?: boolean,
+    isDirectory?: boolean,
+    isExpanded?: boolean,
+    extension?: string,
     content: string,
     parentFile: File
     children: File[]
@@ -23,6 +24,7 @@ const dummyFiles: File[] = [
         isSelected: false,
         isExpanded: false,
         isOpen: false,
+        extension: 'js',
         content: "var a = 10; \n for (var q = 0; i < 10; i++) {\n    console.log('this is s[parta');\n }",
         parentFile: null,
         children: null
@@ -51,6 +53,7 @@ const dummyFiles: File[] = [
                         isSelected: false,
                         isExpanded: false,
                         isOpen: false,
+                        extension: 'js',
                         content: "var a = 10; \n for (var q = 0; i < 10; i++) {\n    console.log('this is s[parta');\n }",
                         parentFile: null,
                         children: null
@@ -61,6 +64,7 @@ const dummyFiles: File[] = [
                         isSelected: false,
                         isExpanded: false,
                         isOpen: false,
+                        extension: 'js',
                         content: "var z = 10; \n for (var q = 0; i < 10; i++) {\n    console.log('this is s[parta');\n }",
                         parentFile: null,
                         children: null
@@ -73,6 +77,7 @@ const dummyFiles: File[] = [
                 isSelected: false,
                 isExpanded: false,
                 isOpen: false,
+                extension: 'js',
                 content: "var a = 10; \n for (var q = 0; i < 10; i++) {\n    console.log('this is s[parta');\n }",
                 parentFile: null,
                 children: null
@@ -83,6 +88,7 @@ const dummyFiles: File[] = [
                 isSelected: false,
                 isExpanded: false,
                 isOpen: false,
+                extension: 'js',
                 content: "var z = 10; \n for (var q = 0; i < 10; i++) {\n    console.log('this is s[parta');\n }",
                 parentFile: null,
                 children: null
@@ -112,6 +118,7 @@ const dummyFiles: File[] = [
                         isSelected: false,
                         isExpanded: false,
                         isOpen: false,
+                        extension: 'js',
                         content: "var a = 10; \n for (var q = 0; i < 10; i++) {\n    console.log('this is s[parta');\n }",
                         parentFile: null,
                         children: null
@@ -122,6 +129,7 @@ const dummyFiles: File[] = [
                         isSelected: false,
                         isExpanded: false,
                         isOpen: false,
+                        extension: 'js',
                         content: "var z = 10; \n for (var q = 0; i < 10; i++) {\n    console.log('this is s[parta');\n }",
                         parentFile: null,
                         children: null
@@ -134,6 +142,7 @@ const dummyFiles: File[] = [
                 isSelected: false,
                 isExpanded: false,
                 isOpen: false,
+                extension: 'js',
                 content: "var a = 10; \n for (var q = 0; i < 10; i++) {\n    console.log('this is s[parta');\n }",
                 parentFile: null,
                 children: null
@@ -144,6 +153,7 @@ const dummyFiles: File[] = [
                 isSelected: false,
                 isExpanded: false,
                 isOpen: false,
+                extension: 'js',
                 content: "var z = 10; \n for (var q = 0; i < 10; i++) {\n    console.log('this is s[parta');\n }",
                 parentFile: null,
                 children: null
@@ -173,6 +183,7 @@ const dummyFiles: File[] = [
                         isSelected: false,
                         isExpanded: false,
                         isOpen: false,
+                        extension: 'js',
                         content: "var a = 10; \n for (var q = 0; i < 10; i++) {\n    console.log('this is s[parta');\n }",
                         parentFile: null,
                         children: null
@@ -183,6 +194,7 @@ const dummyFiles: File[] = [
                         isSelected: false,
                         isExpanded: false,
                         isOpen: false,
+                        extension: 'js',
                         content: "var z = 10; \n for (var q = 0; i < 10; i++) {\n    console.log('this is s[parta');\n }",
                         parentFile: null,
                         children: null
@@ -195,6 +207,7 @@ const dummyFiles: File[] = [
                 isSelected: false,
                 isExpanded: false,
                 isOpen: false,
+                extension: 'js',
                 content: "var a = 10; \n for (var q = 0; i < 10; i++) {\n    console.log('this is s[parta');\n }",
                 parentFile: null,
                 children: null
@@ -205,6 +218,7 @@ const dummyFiles: File[] = [
                 isSelected: false,
                 isExpanded: false,
                 isOpen: false,
+                extension: 'js',
                 content: "var z = 10; \n for (var q = 0; i < 10; i++) {\n    console.log('this is s[parta');\n }",
                 parentFile: null,
                 children: null
