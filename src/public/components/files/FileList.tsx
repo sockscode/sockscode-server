@@ -1,8 +1,10 @@
 import * as React from 'react';
 import CSSModules from 'react-css-modules';
 import { List, ListItem, makeSelectable } from 'material-ui/List';
+import IconButton from 'material-ui/IconButton';
 import SvgIcon from 'material-ui/SvgIcon';
-import ActionGrade from 'material-ui/svg-icons/action/grade';
+import NoteAdd from 'material-ui/svg-icons/action/note-add';
+import CreateNewFolder from 'material-ui/svg-icons/file/create-new-folder';
 import ContentInbox from 'material-ui/svg-icons/content/inbox';
 import ContentDrafts from 'material-ui/svg-icons/content/drafts';
 import ContentSend from 'material-ui/svg-icons/content/send';
@@ -30,7 +32,19 @@ export class FileList extends React.Component<FilesListProps, FilesListState>{
     render() {
         return <div className={styles.container}>
             <SelectableList value={0} onChange={(...args: any[]) => { console.log(args) }}>
-                <Subheader>Project</Subheader>
+                <Subheader>
+                    <div className={styles['project-header']}>
+                        <div className={styles['project-header-title']}>Project</div>
+                        <div className={styles['project-header-buttons']}>
+                            <IconButton tooltip="New file" tooltipPosition="bottom-left">
+                                <NoteAdd />
+                            </IconButton>
+                            <IconButton tooltip="New folder" tooltipPosition="bottom-left">
+                                <CreateNewFolder />
+                            </IconButton>
+                        </div>
+                    </div>
+                </Subheader>
                 {this.renderFileList()}
             </SelectableList>
         </div>
