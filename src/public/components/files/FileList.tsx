@@ -1,4 +1,3 @@
-
 import * as React from 'react';
 import CSSModules from 'react-css-modules';
 import { List, ListItem, makeSelectable } from 'material-ui/List';
@@ -8,14 +7,15 @@ import ContentInbox from 'material-ui/svg-icons/content/inbox';
 import ContentDrafts from 'material-ui/svg-icons/content/drafts';
 import ContentSend from 'material-ui/svg-icons/content/send';
 import Subheader from 'material-ui/Subheader';
-import { FileListState, File } from '../../reducers/FileList'
+import { FileListState, File, FileId } from '../../reducers/FileList'
+import FileItem from '../../containers/files/FileItem'
 import { FileIcon } from './FileIcon';
 const styles = require("./FileList.css");
 
 const SelectableList = makeSelectable(List);
 
 interface FileListReduxProps {
-    fileList: FileListState
+    rootFile: File
 }
 
 interface FilesListProps extends FileListReduxProps {
@@ -26,6 +26,7 @@ interface FilesListState {
 
 @CSSModules(styles)
 export class FileList extends React.Component<FilesListProps, FilesListState>{
+
     render() {
         return <div className={styles.container}>
             <SelectableList value={0} onChange={(...args: any[]) => { console.log(args) }}>
@@ -36,17 +37,11 @@ export class FileList extends React.Component<FilesListProps, FilesListState>{
     }
 
     renderFileList() {
-        let i = 0;
-        const renderFile = (file: File): JSX.Element => {
-            return <ListItem
-                key={i}
-                value={i++}
-                primaryText={file.filename}
-                leftIcon={<FileIcon file={file} />}
-                nestedItems={(file.children || []).map(renderFile)}
-            />
+        const { rootFile } = this.props;
+        const renderFile = (fileId: FileId): JSX.Element => {
+            return <FileItem key={fileId} fileId={fileId} parentFileId={rootFile.id} />;
         }
 
-        return this.props.fileList.files.map(renderFile)
+        return rootFile.children.map(renderFile);
     }
 }

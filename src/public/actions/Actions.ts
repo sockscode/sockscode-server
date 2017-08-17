@@ -1,4 +1,4 @@
-import { Dispatch } from 'redux';
+import { Dispatch, Action } from 'redux';
 import { SocketIoCodeService } from '../service/SocketIoCodeService';
 /*
  * action types
@@ -31,10 +31,10 @@ export interface JoinRoomAction extends HasRoomUuid {
     type: 'JOIN_ROOM';
 }
 
-export interface CodeChangedLocalAction extends HasCode {
+export interface CodeChangedLocalAction extends HasCode, Action {
     type: 'CODE_CHANGED_LOCAL';
 }
-export interface CodeChangedRemoteAction extends HasCode {
+export interface CodeChangedRemoteAction extends HasCode, Action {
     type: 'CODE_CHANGED_REMOTE';
 }
 /*

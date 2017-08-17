@@ -1,20 +1,17 @@
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { SockscodeState } from '../../reducers/Reducers';
-import { codeChanged } from '../../actions/Actions'
+import { expandCollapse } from '../../actions/FileListActions'
 import { FileList as FileListComponent } from '../../components/files/FileList';
+import { File } from '../../reducers/FileList'
 
 
 const mapStateToProps = (state: SockscodeState) => {
-    return { fileList: state.fileList };
+    return { rootFile: state.fileList.files.get(0) };
 }
 
-const mapDispatchToProps = (dispatch: Dispatch<{}>) => {
-    return {
-        //onCodeChange: (code: string) => {
-        //    dispatch(codeChanged(code));
-        //}
-    }
+const mapDispatchToProps = (dispatch: Dispatch<{}>) => {    
+    return {};
 }
 
 const FileList = connect(

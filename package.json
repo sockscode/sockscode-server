@@ -16,6 +16,7 @@
   "author": "Shyyko Serhiy <shyyko.serhiy@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "immutable": "^3.8.1",
     "koa": "^1.2.4",
     "koa-static": "^2.0.0",
     "material-ui": "^0.16.6",
