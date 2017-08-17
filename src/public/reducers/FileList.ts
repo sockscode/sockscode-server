@@ -1,4 +1,5 @@
 import { EXPAND_COLLAPSE, OPEN_FILE, FileListActions } from '../actions/FileListActions';
+import { CodeChangedLocalAction, CodeChangedRemoteAction, CODE_CHANGED_LOCAL, CODE_CHANGED_REMOTE } from '../actions/Actions';
 import { Map, fromJS } from "immutable";
 
 export interface TreeFile {
@@ -251,19 +252,28 @@ let filesFiles = Map<FileId, File>().withMutations((map) => {
 const dummyState: FileListState = { files: filesFiles, open: null };
 (window as any).zzz = dummyState;
 
-const reducer = (state = dummyState, action: FileListActions) => {
+const reducer = (state = dummyState, action: FileListActions | CodeChangedLocalAction | CodeChangedRemoteAction) => {
     console.log(action);
     switch (action.type) {
-        case EXPAND_COLLAPSE:
+        case EXPAND_COLLAPSE: {
             const { fileId } = action;
             const file = state.files.get(fileId);
             const newFile: File = Object.assign({}, file, { isExpanded: !file.isExpanded });
             return Object.assign({}, state, { files: state.files.set(fileId, newFile) });
-        case OPEN_FILE:
+        }
+        case OPEN_FILE: {
             return Object.assign({}, state, { open: action.fileId });
-        default:
-            return state;
+        }
+        case CODE_CHANGED_LOCAL: case CODE_CHANGED_REMOTE: {
+            const openFileId = state.open;
+            if (openFileId) {
+                const openFile = state.files.get(openFileId);
+                const newFile: File = Object.assign({}, openFile, { content: action.code });
+                return Object.assign({}, state, { files: state.files.set(openFileId, newFile) });
+            }            
+        }
     }
+    return state;
 }
 
 export const fileList = reducer;

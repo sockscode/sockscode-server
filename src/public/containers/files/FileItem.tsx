@@ -34,7 +34,7 @@ interface FileItemState {
 @CSSModules(styles)
 class FileItem extends React.Component<FileItemProps, FileItemState>{
     render() {
-        const { onExpandCollapse, onFileOpen, fileId, file, ...other } = this.props;
+        const { onExpandCollapse, onFileOpen, fileId, file, parentFileId, ...other } = this.props;
         return <ListItem
             key={fileId}
             value={fileId}

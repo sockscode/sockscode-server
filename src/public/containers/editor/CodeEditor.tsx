@@ -6,7 +6,13 @@ import { MonacoEditor } from '../../components/editor/MonacoEditor';
 
 
 const mapStateToProps = (state: SockscodeState) => {
-    return { code: state.code };
+    const { open } = state.fileList;
+    if (open) {
+        const file = state.fileList.files.get(open);
+        return { code: file.content };
+    }
+
+    return { code: '' };
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<{}>) => {
