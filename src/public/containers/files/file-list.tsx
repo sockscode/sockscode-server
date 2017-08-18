@@ -1,9 +1,9 @@
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
-import { SockscodeState } from '../../reducers/Reducers';
-import { expandCollapse } from '../../actions/FileListActions'
-import { FileList as FileListComponent } from '../../components/files/FileList';
-import { File } from '../../reducers/FileList'
+import { SockscodeState } from '../../reducers/reducers';
+import { expandCollapse } from '../../actions/file-list-actions'
+import { FileList as FileListComponent } from '../../components/files/file-list';
+import { File } from '../../reducers/file-list'
 
 
 const mapStateToProps = (state: SockscodeState) => {

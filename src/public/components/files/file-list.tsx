@@ -9,10 +9,10 @@ import ContentInbox from 'material-ui/svg-icons/content/inbox';
 import ContentDrafts from 'material-ui/svg-icons/content/drafts';
 import ContentSend from 'material-ui/svg-icons/content/send';
 import Subheader from 'material-ui/Subheader';
-import { FileListState, File, FileId } from '../../reducers/FileList'
-import FileItem from '../../containers/files/FileItem'
-import { FileIcon } from './FileIcon';
-const styles = require("./FileList.css");
+import { FileListState, File, FileId } from '../../reducers/file-list'
+import FileItem from '../../containers/files/file-item'
+import { FileIcon } from './file-icon';
+const styles = require("./file-list.css");
 
 const SelectableList = makeSelectable(List);
 

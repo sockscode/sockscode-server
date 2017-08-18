@@ -1,16 +1,16 @@
 import * as React from 'react'
 import CSSModules from 'react-css-modules';
-import CodeEditor from './editor/CodeEditor';
-import { SockscodeToolbar } from './toolbar/SockscodeToolbar';
-import FileList from './files/FileList';
+import CodeEditor from './editor/code-editor';
+import { SockscodeToolbar } from './toolbar/sockscode-toolbar';
+import FileList from './files/file-list';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux'
 import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
-import { sockscodeApp } from '../reducers/Reducers';
-import { SocketIoCodeService } from '../service/SocketIoCodeService';
-import { createdRoom, codeChanged, remoteCodeChanged } from '../actions/Actions'
+import { sockscodeApp } from '../reducers/reducers';
+import { SocketIoCodeService } from '../service/socket-io-code-service';
+import { createdRoom, codeChanged, remoteCodeChanged } from '../actions/actions'
 // Needed for onTouchTap
 import injectTapEventPlugin from 'react-tap-event-plugin';
 injectTapEventPlugin();
@@ -24,7 +24,7 @@ interface AppState {
 }
 
 const store = createStore(sockscodeApp);
-const styles = require("./App.css");
+const styles = require("./app.css");
 const socketIoCodeService = SocketIoCodeService.instance;
 socketIoCodeService.onCreateRoom((roomUuid) => {
     store.dispatch(createdRoom(roomUuid));

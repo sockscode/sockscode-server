@@ -1,8 +1,8 @@
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
-import { SockscodeState } from '../../reducers/Reducers';
-import { codeChanged } from '../../actions/Actions'
-import { MonacoEditor } from '../../components/editor/MonacoEditor';
+import { SockscodeState } from '../../reducers/reducers';
+import { codeChanged } from '../../actions/actions'
+import { MonacoEditor } from '../../components/editor/monaco-editor';
 
 
 const mapStateToProps = (state: SockscodeState) => {

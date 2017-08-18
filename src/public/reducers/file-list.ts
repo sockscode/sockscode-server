@@ -1,5 +1,5 @@
-import { EXPAND_COLLAPSE, OPEN_FILE, SELECT_FILE, FileListActions } from '../actions/FileListActions';
-import { CodeChangedLocalAction, CodeChangedRemoteAction, CODE_CHANGED_LOCAL, CODE_CHANGED_REMOTE } from '../actions/Actions';
+import { EXPAND_COLLAPSE, OPEN_FILE, SELECT_FILE, FileListActions } from '../actions/file-list-actions';
+import { CodeChangedLocalAction, CodeChangedRemoteAction, CODE_CHANGED_LOCAL, CODE_CHANGED_REMOTE } from '../actions/actions';
 import { Map, fromJS } from "immutable";
 
 export interface TreeFile {

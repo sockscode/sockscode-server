@@ -8,7 +8,7 @@ import TextField from 'material-ui/TextField';
 import NavigationClose from 'material-ui/svg-icons/navigation/close';
 import RaisedButton from 'material-ui/RaisedButton';
 
-const styles = require("./Toolbar.css");
+const styles = require("./toolbar.css");
 
 interface ToolbarProps {
     onCreateNewRoom: () => void;

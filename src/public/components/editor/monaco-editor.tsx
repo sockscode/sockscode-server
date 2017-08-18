@@ -1,6 +1,6 @@
 import * as React from 'react';
 import CSSModules from 'react-css-modules';
-const styles = require("./MonacoEditor.css");
+const styles = require("./monaco-editor.css");
 
 interface MonacoEditorProps {
     code: string,

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
-import { SockscodeState } from '../../reducers/Reducers';
+import { SockscodeState } from '../../reducers/reducers';
 import CSSModules from 'react-css-modules';
 import { List, ListItem, makeSelectable } from 'material-ui/List';
 import SvgIcon from 'material-ui/SvgIcon';
@@ -11,10 +11,10 @@ import ContentDrafts from 'material-ui/svg-icons/content/drafts';
 import ContentSend from 'material-ui/svg-icons/content/send';
 import Subheader from 'material-ui/Subheader';
 import { fade } from 'material-ui/utils/colorManipulator';
-import { FileListState, File, FileId } from '../../reducers/FileList'
-import fileListActions from '../../actions/FileListActions'
-import { FileIcon } from '../../components/files/FileIcon';
-const styles = require("./FileItem.css");
+import { FileListState, File, FileId } from '../../reducers/file-list'
+import fileListActions from '../../actions/file-list-actions'
+import { FileIcon } from '../../components/files/file-icon';
+const styles = require("./file-item.css");
 
 const SelectableList = makeSelectable(List);
 

@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { pure } from 'recompose'
-import { File } from '../../reducers/FileList'
+import { File } from '../../reducers/file-list'
 const iconsJSON = require('../../icons/icons.json') as {
     iconDefinitions: {
         [key: string]: { iconPath: string }
