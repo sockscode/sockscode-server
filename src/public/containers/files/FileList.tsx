@@ -7,7 +7,7 @@ import { File } from '../../reducers/FileList'
 
 
 const mapStateToProps = (state: SockscodeState) => {
-    return { rootFile: state.fileList.files.get(0) };
+    return { rootFile: state.fileList.files.get(0), selectedFile: state.fileList.files.get(state.fileList.open) };
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<{}>) => {    

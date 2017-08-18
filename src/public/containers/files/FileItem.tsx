@@ -10,6 +10,7 @@ import ContentInbox from 'material-ui/svg-icons/content/inbox';
 import ContentDrafts from 'material-ui/svg-icons/content/drafts';
 import ContentSend from 'material-ui/svg-icons/content/send';
 import Subheader from 'material-ui/Subheader';
+import { fade } from 'material-ui/utils/colorManipulator';
 import { FileListState, File, FileId } from '../../reducers/FileList'
 import fileListActions from '../../actions/FileListActions'
 import { FileIcon } from '../../components/files/FileIcon';
@@ -20,7 +21,7 @@ const SelectableList = makeSelectable(List);
 interface FileItemReduxProps {
     file?: File;
     onExpandCollapse?: (fileId: FileId) => void;
-    onFileOpen?: (fileId: FileId) => void;
+    onFileOpen?: (fileId: FileId) => void;    
 }
 
 interface FileItemProps extends FileItemReduxProps {
@@ -33,9 +34,19 @@ interface FileItemState {
 
 @CSSModules(styles)
 class FileItem extends React.Component<FileItemProps, FileItemState>{
+    static contextTypes = {
+        muiTheme: React.PropTypes.object.isRequired,
+    };
+
     render() {
         const { onExpandCollapse, onFileOpen, fileId, file, parentFileId, ...other } = this.props;
+        const style = {} as { backgroundColor: string };
+        if (file.isSelected) {
+            const textColor = this.context.muiTheme.baseTheme.palette.textColor;
+            style.backgroundColor = fade(textColor, 0.2);
+        }
         return <ListItem
+            style={style}
             key={fileId}
             value={fileId}
             primaryText={file.filename}
@@ -60,9 +71,11 @@ const mapDispatchToProps = (dispatch: Dispatch<{}>): FileItemReduxProps => {
     return {
         onExpandCollapse: (fileId: FileId) => {
             dispatch(fileListActions.expandCollapse(fileId));
+            dispatch(fileListActions.selectFile(fileId));
         },
         onFileOpen: (fileId: FileId) => {
             dispatch(fileListActions.openFile(fileId));
+            dispatch(fileListActions.selectFile(fileId));
         }
     }
 }

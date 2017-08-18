@@ -17,7 +17,8 @@ const styles = require("./FileList.css");
 const SelectableList = makeSelectable(List);
 
 interface FileListReduxProps {
-    rootFile: File
+    rootFile: File,
+    selectedFile: File
 }
 
 interface FilesListProps extends FileListReduxProps {

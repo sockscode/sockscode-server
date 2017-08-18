@@ -1,4 +1,4 @@
-import { EXPAND_COLLAPSE, OPEN_FILE, FileListActions } from '../actions/FileListActions';
+import { EXPAND_COLLAPSE, OPEN_FILE, SELECT_FILE, FileListActions } from '../actions/FileListActions';
 import { CodeChangedLocalAction, CodeChangedRemoteAction, CODE_CHANGED_LOCAL, CODE_CHANGED_REMOTE } from '../actions/Actions';
 import { Map, fromJS } from "immutable";
 
@@ -15,21 +15,36 @@ export interface TreeFile {
 
 export type FileId = number;
 
-export type File = {
-    id: FileId,
-    isRoot: boolean,
-    filename: string,
+interface FileVague {
+    id?: FileId,
+    isRoot?: boolean,
+    filename?: string,
     isSelected?: boolean,
     isDirectory?: boolean,
     isExpanded?: boolean,
     extension?: string,
+    content?: string,
+    children?: FileId[]
+}
+
+export interface File extends FileVague {
+    id: FileId,
+    isRoot: boolean,
+    filename: string,
     content: string,
     children: FileId[]
 }
 
+interface FileListStateVague {
+    files?: Map<FileId, File>,
+    open?: FileId,
+    selected?: FileId
+}
+
 export interface FileListState {
     files: Map<FileId, File>,
-    open: FileId
+    open: FileId,
+    selected: FileId
 }
 
 const dummyFiles: TreeFile[] = [
@@ -249,8 +264,16 @@ let filesFiles = Map<FileId, File>().withMutations((map) => {
     });
 });
 
-const dummyState: FileListState = { files: filesFiles, open: null };
+const dummyState: FileListState = { files: filesFiles, open: null, selected: null };
 (window as any).zzz = dummyState;
+
+const updateFile = (file: File, change: FileVague): File => {
+    return Object.assign({}, file, change);
+}
+
+const updateState = (state: FileListState, change: FileListStateVague) => {
+    return Object.assign({}, state, change);
+}
 
 const reducer = (state = dummyState, action: FileListActions | CodeChangedLocalAction | CodeChangedRemoteAction) => {
     console.log(action);
@@ -258,19 +281,35 @@ const reducer = (state = dummyState, action: FileListActions | CodeChangedLocalA
         case EXPAND_COLLAPSE: {
             const { fileId } = action;
             const file = state.files.get(fileId);
-            const newFile: File = Object.assign({}, file, { isExpanded: !file.isExpanded });
-            return Object.assign({}, state, { files: state.files.set(fileId, newFile) });
+            const newFile: File = updateFile(file, { isExpanded: !file.isExpanded });
+            return updateState(state, { files: state.files.set(fileId, newFile) });
         }
         case OPEN_FILE: {
-            return Object.assign({}, state, { open: action.fileId });
+            return updateState(state, { open: action.fileId });
+        }
+        case SELECT_FILE: {
+            let { files, selected } = state;
+            let { fileId: newSelected } = action;
+
+            if (selected) {
+                if (newSelected === selected) {
+                    return state;
+                }
+                files = files.set(selected, updateFile(files.get(selected), { isSelected: false }));
+            }
+            if (newSelected) {
+                files = files.set(newSelected, updateFile(files.get(newSelected), { isSelected: true }));
+            }
+
+            return updateState(state, { files, selected: newSelected });
         }
         case CODE_CHANGED_LOCAL: case CODE_CHANGED_REMOTE: {
             const openFileId = state.open;
             if (openFileId) {
                 const openFile = state.files.get(openFileId);
-                const newFile: File = Object.assign({}, openFile, { content: action.code });
-                return Object.assign({}, state, { files: state.files.set(openFileId, newFile) });
-            }            
+                const newFile: File = updateFile(openFile, { content: action.code });
+                return updateState(state, { files: state.files.set(openFileId, newFile) });
+            }
         }
     }
     return state;
