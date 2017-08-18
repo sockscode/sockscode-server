@@ -32,22 +32,24 @@ export class FileList extends React.Component<FilesListProps, FilesListState>{
 
     render() {
         return <div className={styles.container}>
-            <SelectableList value={0} onChange={(...args: any[]) => { console.log(args) }}>
-                <Subheader>
-                    <div className={styles['project-header']}>
-                        <div className={styles['project-header-title']}>Project</div>
-                        <div className={styles['project-header-buttons']}>
-                            <IconButton tooltip="New file" tooltipPosition="bottom-left">
-                                <NoteAdd />
-                            </IconButton>
-                            <IconButton tooltip="New folder" tooltipPosition="bottom-left">
-                                <CreateNewFolder />
-                            </IconButton>
-                        </div>
+            <Subheader>
+                <div className={styles['project-header']}>
+                    <div className={styles['project-header-title']}>Project</div>
+                    <div className={styles['project-header-buttons']}>
+                        <IconButton tooltip="New file" tooltipPosition="bottom-left">
+                            <NoteAdd />
+                        </IconButton>
+                        <IconButton tooltip="New folder" tooltipPosition="bottom-left">
+                            <CreateNewFolder />
+                        </IconButton>
                     </div>
-                </Subheader>
-                {this.renderFileList()}
-            </SelectableList>
+                </div>
+            </Subheader>
+            <div className={styles['project-files']}>
+                <SelectableList value={0} onChange={(...args: any[]) => { console.log(args) }}>
+                    {this.renderFileList()}
+                </SelectableList>
+            </div>
         </div>
     }
 
