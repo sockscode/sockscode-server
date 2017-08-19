@@ -238,6 +238,25 @@ const dummyFiles: TreeFile[] = [
     }
 ];
 
+const updateFile = (file: File, change: FileVague): File => {
+    return Object.assign({}, file, change);
+}
+
+const updateState = (state: FileListState, change: FileListStateVague) => {
+    return Object.assign({}, state, change);
+}
+
+/**
+ * Returns new File object with sorted children inside
+ * 1. Directories go before files.
+ * 2. Alphabetic order.
+ */
+const sortChildrenOfFile = (state: FileListState, fileId: FileId): File => {
+    const file = state.files.get(fileId);
+    const children = state.files.get(fileId).children.map(fId => state.files.get(fId)).sort((f1, f2) => (+!(f1.isDirectory) - +!(f2.isDirectory)) || f1.filename.localeCompare(f2.filename)).map(f => f.id);
+    return updateFile(file, { children });
+}  
+
 let filesFiles = Map<FileId, File>().withMutations((map) => {
     let nextId = 1;
 
@@ -247,6 +266,7 @@ let filesFiles = Map<FileId, File>().withMutations((map) => {
         const children = treeFile.children ? treeFile.children.map(mapTreeFileToFile) : [];
         const file: File = { id, isRoot: false, filename, isSelected, isDirectory, isExpanded, extension, content, children: treeFile.children ? treeFile.children.map(mapTreeFileToFile) : [] };
         map.set(id, file)
+        map.set(id, sortChildrenOfFile({ files: map, open: null, selected: null }, id))// fixme
 
         return id;
     }
@@ -262,18 +282,11 @@ let filesFiles = Map<FileId, File>().withMutations((map) => {
         isExpanded: false,
         isSelected: false
     });
+    map.set(0, sortChildrenOfFile({ files: map, open: null, selected: null }, 0))// fixme
 });
 
 const dummyState: FileListState = { files: filesFiles, open: null, selected: null };
 (window as any).zzz = dummyState;
-
-const updateFile = (file: File, change: FileVague): File => {
-    return Object.assign({}, file, change);
-}
-
-const updateState = (state: FileListState, change: FileListStateVague) => {
-    return Object.assign({}, state, change);
-}
 
 const reducer = (state = dummyState, action: FileListActions | CodeChangedLocalAction | CodeChangedRemoteAction) => {
     console.log(action);
