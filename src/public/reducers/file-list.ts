@@ -1,6 +1,7 @@
 import { EXPAND_COLLAPSE, OPEN_FILE, SELECT_FILE, RENAME_FILE, FileListActions } from '../actions/file-list-actions';
 import { CodeChangedLocalAction, CodeChangedRemoteAction, CODE_CHANGED_LOCAL, CODE_CHANGED_REMOTE } from '../actions/actions';
 import { Map, fromJS } from "immutable";
+import { update } from '../util/utils';
 
 export interface TreeFile {
     filename: string,
@@ -238,14 +239,6 @@ const dummyFiles: TreeFile[] = [
     }
 ];
 
-const updateFile = (file: File, change: FileVague): File => {
-    return Object.assign({}, file, change);
-}
-
-const updateState = (state: FileListState, change: FileListStateVague) => {
-    return Object.assign({}, state, change);
-}
-
 /**
  * Returns new File object with sorted children inside
  * 1. Directories go before files.
@@ -254,8 +247,8 @@ const updateState = (state: FileListState, change: FileListStateVague) => {
 const sortChildrenOfFile = (state: FileListState, fileId: FileId): File => {
     const file = state.files.get(fileId);
     const children = state.files.get(fileId).children.map(fId => state.files.get(fId)).sort((f1, f2) => (+!(f1.isDirectory) - +!(f2.isDirectory)) || f1.filename.localeCompare(f2.filename)).map(f => f.id);
-    return updateFile(file, { children });
-}  
+    return update(file, { children });
+}
 
 let filesFiles = Map<FileId, File>().withMutations((map) => {
     let nextId = 1;
@@ -280,7 +273,7 @@ let filesFiles = Map<FileId, File>().withMutations((map) => {
         id: 0,
         isDirectory: false,
         isExpanded: false,
-        isSelected: false
+        isSelected: false,
     });
     map.set(0, sortChildrenOfFile({ files: map, open: null, selected: null }, 0))// fixme
 });
@@ -294,11 +287,11 @@ const reducer = (state = dummyState, action: FileListActions | CodeChangedLocalA
         case EXPAND_COLLAPSE: {
             const { fileId } = action;
             const file = state.files.get(fileId);
-            const newFile: File = updateFile(file, { isExpanded: !file.isExpanded });
-            return updateState(state, { files: state.files.set(fileId, newFile) });
+            const newFile: File = update(file, { isExpanded: !file.isExpanded });
+            return update(state, { files: state.files.set(fileId, newFile) });
         }
         case OPEN_FILE: {
-            return updateState(state, { open: action.fileId });
+            return update(state, { open: action.fileId });
         }
         case SELECT_FILE: {
             let { files, selected } = state;
@@ -308,27 +301,27 @@ const reducer = (state = dummyState, action: FileListActions | CodeChangedLocalA
                 if (newSelected === selected) {
                     return state;
                 }
-                files = files.set(selected, updateFile(files.get(selected), { isSelected: false }));
+                files = files.set(selected, update(files.get(selected), { isSelected: false }));
             }
             if (newSelected) {
-                files = files.set(newSelected, updateFile(files.get(newSelected), { isSelected: true }));
+                files = files.set(newSelected, update(files.get(newSelected), { isSelected: true }));
             }
 
-            return updateState(state, { files, selected: newSelected });
+            return update(state, { files, selected: newSelected });
         }
         case RENAME_FILE: {
             const { fileId, filename } = action;
             const { files } = state;
             const lastIndexOfDot = filename.lastIndexOf('.');
             const extension = lastIndexOfDot > 0/*not a bug we need to be > then 0*/ ? filename.substring(lastIndexOfDot + 1) : '';
-            return updateState(state, { files: files.set(fileId, updateFile(files.get(fileId), { filename, extension })) });
+            return update(state, { files: files.set(fileId, update(files.get(fileId), { filename, extension })) });
         }
         case CODE_CHANGED_LOCAL: case CODE_CHANGED_REMOTE: {
             const openFileId = state.open;
             if (openFileId) {
                 const openFile = state.files.get(openFileId);
-                const newFile: File = updateFile(openFile, { content: action.code });
-                return updateState(state, { files: state.files.set(openFileId, newFile) });
+                const newFile: File = update(openFile, { content: action.code });
+                return update(state, { files: state.files.set(openFileId, newFile) });
             }
         }
     }
