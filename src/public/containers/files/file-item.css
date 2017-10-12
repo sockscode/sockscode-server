@@ -1,0 +1,8 @@
+.list-item-input {
+    height: 16px !important;    
+    line-height: unset !important;
+}
+
+.list-item-input hr{
+    bottom: -8px !important;
+}

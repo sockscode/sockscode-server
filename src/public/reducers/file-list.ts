@@ -1,4 +1,4 @@
-import { EXPAND_COLLAPSE, OPEN_FILE, SELECT_FILE, FileListActions } from '../actions/file-list-actions';
+import { EXPAND_COLLAPSE, OPEN_FILE, SELECT_FILE, RENAME_FILE, FileListActions } from '../actions/file-list-actions';
 import { CodeChangedLocalAction, CodeChangedRemoteAction, CODE_CHANGED_LOCAL, CODE_CHANGED_REMOTE } from '../actions/actions';
 import { Map, fromJS } from "immutable";
 
@@ -315,6 +315,13 @@ const reducer = (state = dummyState, action: FileListActions | CodeChangedLocalA
             }
 
             return updateState(state, { files, selected: newSelected });
+        }
+        case RENAME_FILE: {
+            const { fileId, filename } = action;
+            const { files } = state;
+            const lastIndexOfDot = filename.lastIndexOf('.');
+            const extension = lastIndexOfDot > 0/*not a bug we need to be > then 0*/ ? filename.substring(lastIndexOfDot + 1) : '';
+            return updateState(state, { files: files.set(fileId, updateFile(files.get(fileId), { filename, extension })) });
         }
         case CODE_CHANGED_LOCAL: case CODE_CHANGED_REMOTE: {
             const openFileId = state.open;
