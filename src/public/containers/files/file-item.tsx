@@ -241,6 +241,7 @@ class FileItem extends React.Component<FileItemProps, FileItemState>{
             (textField: TextField) => {
                 setTimeout(() => {
                     textField && textField.focus();
+                    textField && file.filename === '' && textField.getInputNode().scrollIntoView();                    
                 }, 10)
             }
         } onBlur={() => {
