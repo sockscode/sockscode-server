@@ -5,7 +5,6 @@ import Dialog from 'material-ui/Dialog';
 import IconButton from 'material-ui/IconButton';
 import SvgIcon from 'material-ui/SvgIcon';
 import TextField from 'material-ui/TextField';
-import NavigationClose from 'material-ui/svg-icons/navigation/close';
 import RaisedButton from 'material-ui/RaisedButton';
 
 const styles = require("./toolbar.css");
@@ -59,8 +58,10 @@ export class Toolbar extends React.Component<ToolbarProps, ToolbarState>{
         />
     }
 
-    processWindowTouchTap(newRoom: boolean) {
-        this.props.onCreateNewRoom();
+    processWindowTouchTap(newRoom: boolean) {        
+        if (newRoom) {
+            this.props.onCreateNewRoom();
+        }
         this.setState({ createNewRoomWindowOpen: false });
     }
 
