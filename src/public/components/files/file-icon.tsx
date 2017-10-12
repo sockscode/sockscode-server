@@ -191,7 +191,7 @@ const getIconSrcByFile = (file: File) => {
             icon = iconsJSON.folderNames[file.filename] || '_folder';
         }
     } else {
-        icon = iconsJSON.fileExtensions[file.extension] || iconsJSON.languageIds[extToLanguageMap[file.extension]] || iconsJSON.fileNames[file.filename] || iconsJSON.languageIds[file.extension] || '_file';
+        icon = iconsJSON.fileNames[file.filename] || iconsJSON.fileExtensions[file.extension] || iconsJSON.languageIds[extToLanguageMap[file.extension]] || iconsJSON.languageIds[file.extension] || '_file';
     }
     return iconsJSON.iconDefinitions[icon].iconPath;
 }
