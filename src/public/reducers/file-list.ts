@@ -292,10 +292,9 @@ const reducer = (state = dummyState, action: FileListActions | CodeChangedLocalA
     console.log(action);
     switch (action.type) {
         case EXPAND_COLLAPSE: {
-            const { fileId } = action;            
+            const { fileId } = action;
             const file = state.files.get(fileId);
-            const newFile: File = update(file, { isExpanded: !file.isExpanded });
-            return update(state, { files: state.files.set(fileId, newFile) });
+            return updateFileInState(state, fileId, { isExpanded: !file.isExpanded });
         }
         case OPEN_FILE: {
             return update(state, { open: action.fileId });
@@ -321,7 +320,7 @@ const reducer = (state = dummyState, action: FileListActions | CodeChangedLocalA
             const { files } = state;
             const lastIndexOfDot = filename.lastIndexOf('.');
             const extension = lastIndexOfDot > 0/*not a bug we need to be > then 0*/ ? filename.substring(lastIndexOfDot + 1) : '';
-            return update(state, { files: files.set(fileId, update(files.get(fileId), { filename, extension, isRenaming: false })) });
+            return updateFileInState(state, fileId, { filename, extension, isRenaming: false });
         }
         case SET_RENAMING_FILE: {
             const { fileId, isRenaming } = action;
@@ -330,9 +329,7 @@ const reducer = (state = dummyState, action: FileListActions | CodeChangedLocalA
         case CODE_CHANGED_LOCAL: case CODE_CHANGED_REMOTE: {
             const openFileId = state.open;
             if (openFileId) {
-                const openFile = state.files.get(openFileId);
-                const newFile: File = update(openFile, { content: action.code });
-                return update(state, { files: state.files.set(openFileId, newFile) });
+                return updateFileInState(state, openFileId, { content: action.code });
             }
         }
     }
