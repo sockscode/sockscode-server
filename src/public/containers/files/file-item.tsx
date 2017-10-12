@@ -106,6 +106,7 @@ class FileItem extends React.Component<FileItemProps, FileItemState>{
         this.onContextMenu = this.onContextMenu.bind(this);
         this.onContextMenuClose = this.onContextMenuClose.bind(this);
         this.onRenameMenuClick = this.onRenameMenuClick.bind(this);
+        this.onDeleteMenuClick = this.onDeleteMenuClick.bind(this);
         this.onChangeRenamingValue = this.onChangeRenamingValue.bind(this);
 
         const me = this;
@@ -166,6 +167,12 @@ class FileItem extends React.Component<FileItemProps, FileItemState>{
         const { file, fileId } = this.props;
         this.setState({ contextMenuOpen: false, contextMenuAnchorEl: null, renamingValue: file.filename });
         this.props.onSetIsRenaming(fileId, true);
+    }
+
+    onDeleteMenuClick() {
+        const { fileId, parentFileId } = this.props;
+        this.setState({ contextMenuOpen: false, contextMenuAnchorEl: null });
+        this.props.onRemoveFile(fileId, parentFileId);
     }
 
     onChangeRenamingValue(e: React.FormEvent<{}>, renamingValue: string) {
@@ -262,6 +269,7 @@ class FileItem extends React.Component<FileItemProps, FileItemState>{
             >
                 <Menu>
                     <MenuItem primaryText="Rename" onClick={this.onRenameMenuClick} />
+                    <MenuItem primaryText="Delete" onClick={this.onDeleteMenuClick} />
                 </Menu>
             </PositionedPopover>
         </ListItem>
