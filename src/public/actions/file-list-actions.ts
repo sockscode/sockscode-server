@@ -1,6 +1,4 @@
-import { Dispatch } from 'redux';
-import { SocketIoCodeService } from '../service/socket-io-code-service';
-import { File, FileId } from '../reducers/file-list';
+import { FileId } from '../reducers/file-list';
 /*
  * action types
  */

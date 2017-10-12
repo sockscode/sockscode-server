@@ -6,7 +6,7 @@ import { AppContainer } from 'react-hot-loader';
 
 // Import our App container (which we will create in the next step)
 import { App } from './containers/app';
-const styles = require("./index.css");
+require("./index.css");
 
 import {createRoom} from './actions/actions';
 console.log(createRoom);

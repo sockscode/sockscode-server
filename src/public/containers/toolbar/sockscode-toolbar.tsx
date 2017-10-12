@@ -1,7 +1,6 @@
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { SockscodeState } from '../../reducers/reducers';
-import { codeChanged } from '../../actions/actions';
 import { Toolbar } from '../../components/toolbar/toolbar';
 import { createRoom, changedRoom, joinRoom } from '../../actions/actions';
 

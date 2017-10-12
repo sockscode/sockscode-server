@@ -197,7 +197,6 @@ const getIconSrcByFile = (file: File) => {
 }
 
 let CustomIcon = (props: { file: File, [key: string]: string | File }) => {
-    const { filename } = props;
     const { file, ..._props } = props;
     return <img {..._props} src={getIconSrcByFile(file)} />;
 };

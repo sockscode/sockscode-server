@@ -1,4 +1,4 @@
-import { CreatedRoomAction, CreateRoomAction, ChangedRoomAction, CREATE_ROOM, CHANGED_ROOM, CREATED_ROOM,  } from '../actions/actions';
+import { CreatedRoomAction, CreateRoomAction, ChangedRoomAction, CHANGED_ROOM, CREATED_ROOM,  } from '../actions/actions';
 
 const reducer = (state = '', action: CreatedRoomAction | CreateRoomAction | ChangedRoomAction) => {
     console.log(action);

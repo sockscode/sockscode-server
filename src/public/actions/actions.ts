@@ -1,4 +1,4 @@
-import { Dispatch, Action } from 'redux';
+import { Action } from 'redux';
 import { SocketIoCodeService } from '../service/socket-io-code-service';
 /*
  * action types

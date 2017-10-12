@@ -10,7 +10,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import { sockscodeApp } from '../reducers/reducers';
 import { SocketIoCodeService } from '../service/socket-io-code-service';
-import { createdRoom, codeChanged, remoteCodeChanged } from '../actions/actions'
+import { createdRoom, remoteCodeChanged } from '../actions/actions'
 // Needed for onTouchTap
 import injectTapEventPlugin from 'react-tap-event-plugin';
 injectTapEventPlugin();

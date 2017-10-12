@@ -44,7 +44,7 @@ export class MonacoEditor extends React.Component<MonacoEditorProps, MonacoEdito
         //destroying monaco editor
     }
 
-    componentDidUpdate(prevProps: MonacoEditorProps, prevState: MonacoEditorState) {
+    componentDidUpdate(_prevProps: MonacoEditorProps, _prevState: MonacoEditorState) {
         if (this.monacoEditor) {
             this.skipNextChangeEvent = true;
             const position = this.monacoEditor.getPosition();
@@ -53,7 +53,7 @@ export class MonacoEditor extends React.Component<MonacoEditorProps, MonacoEdito
         }
     }
 
-    shouldComponentUpdate(nextProps: MonacoEditorProps, nextState: MonacoEditorState) {
+    shouldComponentUpdate(nextProps: MonacoEditorProps, _nextState: MonacoEditorState) {
         return !this.monacoEditor || this.monacoEditor.getModel().getValue() !== nextProps.code;
     }
 

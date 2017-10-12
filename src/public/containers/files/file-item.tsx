@@ -3,26 +3,19 @@ import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { SockscodeState } from '../../reducers/reducers';
 import CSSModules from 'react-css-modules';
-import { List, ListItem, makeSelectable } from 'material-ui/List';
-import SvgIcon from 'material-ui/SvgIcon';
-import ActionGrade from 'material-ui/svg-icons/action/grade';
-import ContentInbox from 'material-ui/svg-icons/content/inbox';
-import ContentDrafts from 'material-ui/svg-icons/content/drafts';
-import ContentSend from 'material-ui/svg-icons/content/send';
-import Subheader from 'material-ui/Subheader';
+import { ListItem } from 'material-ui/List';
 import TextField from 'material-ui/TextField';
 import Popover from 'material-ui/Popover';
 import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
 import RenderToLayer from 'material-ui/internal/RenderToLayer'
 import { fade } from 'material-ui/utils/colorManipulator';
-import { FileListState, File, FileId } from '../../reducers/file-list'
+import { File, FileId } from '../../reducers/file-list'
 import fileListActions from '../../actions/file-list-actions'
 import { FileIcon } from '../../components/files/file-icon';
+
 import EventListener from 'react-event-listener';
 const styles = require("./file-item.css");
-
-const SelectableList = makeSelectable(List);
 
 interface FileItemReduxProps {
     file?: File;
@@ -78,7 +71,7 @@ const RenderToLayerWithContextMenu = class extends RenderToLayer {
                 return;
             }
             const { layer } = me;
-            const { open, useLayerForClickAway } = me.props;
+            const { useLayerForClickAway } = me.props;
 
             unrenderLayer.call(this);
             if (useLayerForClickAway) {
@@ -175,7 +168,7 @@ class FileItem extends React.Component<FileItemProps, FileItemState>{
         this.props.onRemoveFile(fileId, parentFileId);
     }
 
-    onChangeRenamingValue(e: React.FormEvent<{}>, renamingValue: string) {
+    onChangeRenamingValue(_e: React.FormEvent<{}>, renamingValue: string) {
         this.setState({ renamingValue });
         this.checkRenamingErrors(renamingValue);
     }
@@ -206,7 +199,7 @@ class FileItem extends React.Component<FileItemProps, FileItemState>{
 
     checkRenamingErrors(renamingValue: string = this.state.renamingValue) {
         const state = this.context.store.getState() as SockscodeState;
-        const { parentFileId, fileId, file } = this.props;
+        const { parentFileId, fileId } = this.props;
 
         if (renamingValue === '') {
             this.setState({ renamingErrorText: 'A file or folder name should be provided' })

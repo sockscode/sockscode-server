@@ -1,17 +1,12 @@
 import * as React from 'react';
 import CSSModules from 'react-css-modules';
-import { List, ListItem, makeSelectable } from 'material-ui/List';
+import { List,  makeSelectable } from 'material-ui/List';
 import IconButton from 'material-ui/IconButton';
-import SvgIcon from 'material-ui/SvgIcon';
 import NoteAdd from 'material-ui/svg-icons/action/note-add';
 import CreateNewFolder from 'material-ui/svg-icons/file/create-new-folder';
-import ContentInbox from 'material-ui/svg-icons/content/inbox';
-import ContentDrafts from 'material-ui/svg-icons/content/drafts';
-import ContentSend from 'material-ui/svg-icons/content/send';
 import Subheader from 'material-ui/Subheader';
-import { FileListState, File, FileId } from '../../reducers/file-list'
+import { File, FileId } from '../../reducers/file-list'
 import FileItem from '../../containers/files/file-item'
-import { FileIcon } from './file-icon';
 const styles = require("./file-list.css");
 
 const SelectableList = makeSelectable(List);

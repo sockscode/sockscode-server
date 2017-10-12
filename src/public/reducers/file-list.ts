@@ -1,6 +1,6 @@
 import { EXPAND_COLLAPSE, OPEN_FILE, SELECT_FILE, RENAME_FILE, SET_RENAMING_FILE, CREATE_FILE, REMOVE_FILE, FileListActions } from '../actions/file-list-actions';
 import { CodeChangedLocalAction, CodeChangedRemoteAction, CODE_CHANGED_LOCAL, CODE_CHANGED_REMOTE } from '../actions/actions';
-import { Map, fromJS, List } from "immutable";
+import { Map } from "immutable";
 import { update } from '../util/utils';
 
 export interface TreeFile {
@@ -32,12 +32,6 @@ interface FileVague {
 export interface File extends FileVague {
     id: FileId,
     filename: string,
-}
-
-interface FileListStateVague {
-    files?: Map<FileId, File>,
-    open?: FileId,
-    selected?: FileId
 }
 
 export interface FileListState {
@@ -260,7 +254,7 @@ let filesFiles = Map<FileId, File>().withMutations((map) => {
     const mapTreeFileToFile = (treeFile: TreeFile): number => {
         const id = nextId++;
         const { filename, isSelected, isDirectory, isExpanded, extension, content } = treeFile;
-        const children = treeFile.children ? treeFile.children.map(mapTreeFileToFile) : [];
+        treeFile.children && treeFile.children.map(mapTreeFileToFile);
         const file: File = { id, isRoot: false, filename, isSelected, isDirectory, isExpanded, extension, content, children: treeFile.children ? treeFile.children.map(mapTreeFileToFile) : [] };
         map.set(id, file)
         map.set(id, sortChildrenOfFile({ files: map, open: null, selected: null, selectedParent: null }, id))// fixme
@@ -320,7 +314,6 @@ const reducer = (state = dummyState, action: FileListActions | CodeChangedLocalA
         }
         case RENAME_FILE: {
             const { fileId, filename } = action;
-            const { files } = state;
             const lastIndexOfDot = filename.lastIndexOf('.');
             const extension = lastIndexOfDot > 0/*not a bug we need to be > then 0*/ ? filename.substring(lastIndexOfDot + 1) : '';
             return updateFileInState(state, fileId, { filename, extension, isRenaming: false });
