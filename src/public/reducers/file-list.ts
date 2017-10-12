@@ -1,6 +1,6 @@
-import { EXPAND_COLLAPSE, OPEN_FILE, SELECT_FILE, RENAME_FILE, SET_RENAMING_FILE, CREATE_FILE, FileListActions } from '../actions/file-list-actions';
+import { EXPAND_COLLAPSE, OPEN_FILE, SELECT_FILE, RENAME_FILE, SET_RENAMING_FILE, CREATE_FILE, REMOVE_FILE, FileListActions } from '../actions/file-list-actions';
 import { CodeChangedLocalAction, CodeChangedRemoteAction, CODE_CHANGED_LOCAL, CODE_CHANGED_REMOTE } from '../actions/actions';
-import { Map, fromJS } from "immutable";
+import { Map, fromJS, List } from "immutable";
 import { update } from '../util/utils';
 
 export interface TreeFile {
@@ -353,6 +353,22 @@ const reducer = (state = dummyState, action: FileListActions | CodeChangedLocalA
                 ),
                 parentFileId
             ), parentFileId, { isExpanded: true });
+        }
+        case REMOVE_FILE: {
+            const { fileId, parentFileId } = action;
+            const { files } = state;
+            const parentFile = files.get(parentFileId);
+            const indexOfFile = parentFile.children.indexOf(fileId);
+            const children = parentFile.children.slice(0, indexOfFile).concat(parentFile.children.slice(indexOfFile + 1));
+            let updatedState = updateFileInState(update(state, { files: state.files.remove(fileId) }), parentFileId, { children });
+            if (updatedState.selected === fileId || updatedState.selectedParent === fileId) {
+                updatedState = update(updatedState, { selected: null, selectedParent: null });
+            }
+            if (updatedState.open === fileId) {
+                updatedState = update(updatedState, { open: null });
+            }
+
+            return updatedState;
         }
         case SET_RENAMING_FILE: {
             const { fileId, isRenaming } = action;

@@ -10,6 +10,7 @@ export const SELECT_FILE = 'SELECT_FILE' as 'SELECT_FILE';
 export const RENAME_FILE = 'RENAME_FILE' as 'RENAME_FILE';
 export const SET_RENAMING_FILE = 'SET_RENAMING_FILE' as 'SET_RENAMING_FILE';
 export const CREATE_FILE = 'CREATE_FILE' as 'CREATE_FILE';
+export const REMOVE_FILE = 'REMOVE_FILE' as 'REMOVE_FILE';
 
 interface ActionWithFile {
     fileId: FileId
@@ -43,7 +44,13 @@ export interface CreateFileAction {
     isDirectory: boolean;
 }
 
-export type FileListActions = ExpandCollapseAction | OpenFileAction | SelectFileAction | RenameFileAction | SetRenamingFileAction | CreateFileAction;
+export interface RemoveFileAction {
+    type: typeof REMOVE_FILE,
+    fileId: FileId,
+    parentFileId: FileId
+}
+
+export type FileListActions = ExpandCollapseAction | OpenFileAction | SelectFileAction | RenameFileAction | SetRenamingFileAction | CreateFileAction | RemoveFileAction;
 /*
  * action creators
  */
@@ -71,11 +78,16 @@ export function createFile(isDirectory: boolean): CreateFileAction {
     return { type: CREATE_FILE, isDirectory }
 }
 
+export function removeFile(fileId: FileId, parentFileId: FileId): RemoveFileAction {
+    return { type: REMOVE_FILE, fileId, parentFileId }
+}
+
 export default {
     expandCollapse,
     openFile,
     selectFile,
     renameFile,
     setRenamingFile,
-    createFile
+    createFile,
+    removeFile
 }

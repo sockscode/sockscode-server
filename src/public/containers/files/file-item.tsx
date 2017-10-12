@@ -30,6 +30,7 @@ interface FileItemReduxProps {
     onFileOpen?: (fileId: FileId, parentFileId: FileId) => void;
     onFileRename?: (fileId: FileId, filename: string) => void;
     onSetIsRenaming?: (fileId: FileId, isRenaming: boolean) => void;
+    onRemoveFile?: (fileId: FileId, parentFileId: FileId) => void;
 }
 
 interface FileItemProps extends FileItemReduxProps {
@@ -178,10 +179,15 @@ class FileItem extends React.Component<FileItemProps, FileItemState>{
      */
     onTryRename(isEnterRename?: boolean) {
         const { renamingErrorText, renamingValue } = this.state;
-        const { fileId } = this.props;
+        const { fileId, file, parentFileId } = this.props;
 
+        if (file.filename === '' && (renamingValue === '' || renamingValue == null || renamingErrorText) && !isEnterRename) {
+            //just remove this file was just created and no name was set after creation
+            this.props.onRemoveFile(fileId, parentFileId);
+            return;
+        }
         if (renamingErrorText) {
-            if (!isEnterRename) {                
+            if (!isEnterRename) {                                
                 this.setState({ renamingErrorText: undefined, renamingValue: undefined });
                 this.props.onSetIsRenaming(fileId, false);
             }
@@ -281,6 +287,9 @@ const mapDispatchToProps = (dispatch: Dispatch<{}>): FileItemReduxProps => {
         },
         onSetIsRenaming: (fileId: FileId, isRenaming: boolean) => {
             dispatch(fileListActions.setRenamingFile(fileId, isRenaming))
+        },
+        onRemoveFile: (fileId: FileId, parentFileId: FileId) => {
+            dispatch(fileListActions.removeFile(fileId, parentFileId));
         }
     }
 }
