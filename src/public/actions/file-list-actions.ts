@@ -8,6 +8,7 @@ export const EXPAND_COLLAPSE = 'EXPAND_COLLAPSE' as 'EXPAND_COLLAPSE';
 export const OPEN_FILE = 'OPEN_FILE' as 'OPEN_FILE';
 export const SELECT_FILE = 'SELECT_FILE' as 'SELECT_FILE';
 export const RENAME_FILE = 'RENAME_FILE' as 'RENAME_FILE';
+export const SET_RENAMING_FILE = 'SET_RENAMING_FILE' as 'SET_RENAMING_FILE';
 
 interface ActionWithFile {
     fileId: FileId
@@ -30,7 +31,12 @@ export interface RenameFileAction extends ActionWithFile {
     filename: string;
 }
 
-export type FileListActions = ExpandCollapseAction | OpenFileAction | SelectFileAction | RenameFileAction;
+export interface SetRenamingFileAction extends ActionWithFile {
+    type: typeof SET_RENAMING_FILE;
+    isRenaming: boolean;
+}
+
+export type FileListActions = ExpandCollapseAction | OpenFileAction | SelectFileAction | RenameFileAction | SetRenamingFileAction;
 /*
  * action creators
  */
@@ -50,9 +56,14 @@ export function renameFile(fileId: FileId, filename: string): RenameFileAction {
     return { type: RENAME_FILE, fileId, filename }
 }
 
+export function setRenamingFile(fileId: FileId, isRenaming: boolean): SetRenamingFileAction {
+    return { type: SET_RENAMING_FILE, fileId, isRenaming }
+}
+
 export default {
     expandCollapse,
     openFile,
     selectFile,
-    renameFile
+    renameFile,
+    setRenamingFile
 }

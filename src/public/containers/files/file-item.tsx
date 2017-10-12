@@ -29,6 +29,7 @@ interface FileItemReduxProps {
     onExpandCollapse?: (fileId: FileId) => void;
     onFileOpen?: (fileId: FileId) => void;
     onFileRename?: (fileId: FileId, filename: string) => void;
+    onSetIsRenaming?: (fileId: FileId, isRenaming: boolean) => void;
 }
 
 interface FileItemProps extends FileItemReduxProps {
@@ -37,7 +38,6 @@ interface FileItemProps extends FileItemReduxProps {
 }
 
 interface FileItemState {
-    renaming: boolean,
     contextMenuOpen: boolean,
     contextMenuPosition: { top: number, left: number }
     contextMenuAnchorEl: any,
@@ -101,7 +101,7 @@ class FileItem extends React.Component<FileItemProps, FileItemState>{
     constructor(props?: FileItemProps, context?: any) {
         super(props, context);
 
-        this.state = { renaming: false, contextMenuOpen: false, contextMenuAnchorEl: null, contextMenuPosition: null, renamingValue: null, renamingErrorText: null };
+        this.state = { contextMenuOpen: false, contextMenuAnchorEl: null, contextMenuPosition: null, renamingValue: null, renamingErrorText: null };
         this.onContextMenu = this.onContextMenu.bind(this);
         this.onContextMenuClose = this.onContextMenuClose.bind(this);
         this.onRenameMenuClick = this.onRenameMenuClick.bind(this);
@@ -162,8 +162,9 @@ class FileItem extends React.Component<FileItemProps, FileItemState>{
     }
 
     onRenameMenuClick() {
-        const { file } = this.props;
-        this.setState({ contextMenuOpen: false, contextMenuAnchorEl: null, renaming: true, renamingValue: file.filename });
+        const { file, fileId } = this.props;
+        this.setState({ contextMenuOpen: false, contextMenuAnchorEl: null, renamingValue: file.filename });
+        this.props.onSetIsRenaming(fileId, true);
     }
 
     onChangeRenamingValue(e: React.FormEvent<{}>, renamingValue: string) {
@@ -176,16 +177,17 @@ class FileItem extends React.Component<FileItemProps, FileItemState>{
      * @param isEnterRename if renaming was trigered by pressing enter key
      */
     onTryRename(isEnterRename?: boolean) {
-        const { renamingErrorText, renamingValue, renaming } = this.state;
+        const { renamingErrorText, renamingValue } = this.state;
         const { fileId } = this.props;
 
         if (renamingErrorText) {
             if (!isEnterRename) {
-                this.setState({ renaming: false, renamingErrorText: undefined, renamingValue: undefined });
+                this.setState({ renamingErrorText: undefined, renamingValue: undefined });
+                this.props.onSetIsRenaming(fileId, false);
             }
             return;
         }
-        this.setState({ renaming: false, renamingErrorText: undefined, renamingValue: undefined });
+        this.setState({ renamingErrorText: undefined, renamingValue: undefined });
         this.props.onFileRename(fileId, renamingValue);
     }
 
@@ -208,14 +210,15 @@ class FileItem extends React.Component<FileItemProps, FileItemState>{
 
     render() {
         const { onExpandCollapse, onFileOpen, fileId, file, parentFileId, ...other } = this.props;
-        const { renaming, contextMenuOpen, contextMenuAnchorEl, renamingValue, renamingErrorText } = this.state;
+        const { contextMenuOpen, contextMenuAnchorEl, renamingValue, renamingErrorText } = this.state;
+        const { isRenaming } = file;
         const { PositionedPopover } = this;
         const style = {} as { backgroundColor: string };
         if (file.isSelected) {
             const textColor = this.context.muiTheme.baseTheme.palette.textColor;
             style.backgroundColor = fade(textColor, 0.2);
         }
-        const primaryText = renaming ? <TextField id={`rename-file-input${fileId}`} key={fileId} className={styles['list-item-input']} value={renamingValue} onKeyDown={(event) => {
+        const primaryText = isRenaming ? <TextField id={`rename-file-input${fileId}`} key={fileId} className={styles['list-item-input']} value={renamingValue} onKeyDown={(event) => {
             if (event.key === 'Enter') {
                 this.onTryRename(true);
                 event.preventDefault();
@@ -275,6 +278,9 @@ const mapDispatchToProps = (dispatch: Dispatch<{}>): FileItemReduxProps => {
         },
         onFileRename: (fileId: FileId, filename: string) => {
             dispatch(fileListActions.renameFile(fileId, filename))
+        },
+        onSetIsRenaming: (fileId: FileId, isRenaming: boolean) => {
+            dispatch(fileListActions.setRenamingFile(fileId, isRenaming))
         }
     }
 }

@@ -1,4 +1,4 @@
-import { EXPAND_COLLAPSE, OPEN_FILE, SELECT_FILE, RENAME_FILE, FileListActions } from '../actions/file-list-actions';
+import { EXPAND_COLLAPSE, OPEN_FILE, SELECT_FILE, RENAME_FILE, SET_RENAMING_FILE, FileListActions } from '../actions/file-list-actions';
 import { CodeChangedLocalAction, CodeChangedRemoteAction, CODE_CHANGED_LOCAL, CODE_CHANGED_REMOTE } from '../actions/actions';
 import { Map, fromJS } from "immutable";
 import { update } from '../util/utils';
@@ -20,6 +20,7 @@ interface FileVague {
     id?: FileId,
     isRoot?: boolean,
     filename?: string,
+    isRenaming?: boolean,
     isSelected?: boolean,
     isDirectory?: boolean,
     isExpanded?: boolean,
@@ -278,6 +279,12 @@ let filesFiles = Map<FileId, File>().withMutations((map) => {
     map.set(0, sortChildrenOfFile({ files: map, open: null, selected: null }, 0))// fixme
 });
 
+const updateFileInState = <K extends keyof File>(state: FileListState, fileId: FileId, fileUpdate: Pick<File, K>) => {
+    const file = state.files.get(fileId);
+    const newFile: File = update(file, fileUpdate);
+    return update(state, { files: state.files.set(fileId, newFile) });
+}
+
 const dummyState: FileListState = { files: filesFiles, open: null, selected: null };
 (window as any).zzz = dummyState;
 
@@ -285,7 +292,7 @@ const reducer = (state = dummyState, action: FileListActions | CodeChangedLocalA
     console.log(action);
     switch (action.type) {
         case EXPAND_COLLAPSE: {
-            const { fileId } = action;
+            const { fileId } = action;            
             const file = state.files.get(fileId);
             const newFile: File = update(file, { isExpanded: !file.isExpanded });
             return update(state, { files: state.files.set(fileId, newFile) });
@@ -314,7 +321,11 @@ const reducer = (state = dummyState, action: FileListActions | CodeChangedLocalA
             const { files } = state;
             const lastIndexOfDot = filename.lastIndexOf('.');
             const extension = lastIndexOfDot > 0/*not a bug we need to be > then 0*/ ? filename.substring(lastIndexOfDot + 1) : '';
-            return update(state, { files: files.set(fileId, update(files.get(fileId), { filename, extension })) });
+            return update(state, { files: files.set(fileId, update(files.get(fileId), { filename, extension, isRenaming: false })) });
+        }
+        case SET_RENAMING_FILE: {
+            const { fileId, isRenaming } = action;
+            return updateFileInState(state, fileId, { isRenaming });
         }
         case CODE_CHANGED_LOCAL: case CODE_CHANGED_REMOTE: {
             const openFileId = state.open;
