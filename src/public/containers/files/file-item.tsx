@@ -26,8 +26,8 @@ const SelectableList = makeSelectable(List);
 
 interface FileItemReduxProps {
     file?: File;
-    onExpandCollapse?: (fileId: FileId) => void;
-    onFileOpen?: (fileId: FileId) => void;
+    onExpandCollapse?: (fileId: FileId, parentFileId: FileId) => void;
+    onFileOpen?: (fileId: FileId, parentFileId: FileId) => void;
     onFileRename?: (fileId: FileId, filename: string) => void;
     onSetIsRenaming?: (fileId: FileId, isRenaming: boolean) => void;
 }
@@ -181,7 +181,7 @@ class FileItem extends React.Component<FileItemProps, FileItemState>{
         const { fileId } = this.props;
 
         if (renamingErrorText) {
-            if (!isEnterRename) {
+            if (!isEnterRename) {                
                 this.setState({ renamingErrorText: undefined, renamingValue: undefined });
                 this.props.onSetIsRenaming(fileId, false);
             }
@@ -239,9 +239,9 @@ class FileItem extends React.Component<FileItemProps, FileItemState>{
             primaryText={primaryText}
             leftIcon={<FileIcon file={file} />}
             open={file.isExpanded}
-            onClick={() => { if (file.isDirectory) { onExpandCollapse(fileId) } else { onFileOpen(fileId) } }}
+            onClick={() => { if (file.isDirectory) { onExpandCollapse(fileId, parentFileId) } else { onFileOpen(fileId, parentFileId) } }}
             onContextMenu={this.onContextMenu}
-            onNestedListToggle={() => { onExpandCollapse(fileId) }}
+            onNestedListToggle={() => { onExpandCollapse(fileId, parentFileId) }}
             nestedItems={(file.children || []).map((fileChildId) => {
                 return <FileItemConnected key={fileChildId} fileId={fileChildId} parentFileId={fileId} />
             })}
@@ -268,13 +268,13 @@ const mapStateToProps = (state: SockscodeState, props: FileItemProps): FileItemR
 
 const mapDispatchToProps = (dispatch: Dispatch<{}>): FileItemReduxProps => {
     return {
-        onExpandCollapse: (fileId: FileId) => {
+        onExpandCollapse: (fileId: FileId, parentFileId: FileId) => {
             dispatch(fileListActions.expandCollapse(fileId));
-            dispatch(fileListActions.selectFile(fileId));
+            dispatch(fileListActions.selectFile(fileId, parentFileId));
         },
-        onFileOpen: (fileId: FileId) => {
+        onFileOpen: (fileId: FileId, parentFileId: FileId) => {
             dispatch(fileListActions.openFile(fileId));
-            dispatch(fileListActions.selectFile(fileId));
+            dispatch(fileListActions.selectFile(fileId, parentFileId));
         },
         onFileRename: (fileId: FileId, filename: string) => {
             dispatch(fileListActions.renameFile(fileId, filename))

@@ -1,4 +1,4 @@
-import { EXPAND_COLLAPSE, OPEN_FILE, SELECT_FILE, RENAME_FILE, SET_RENAMING_FILE, FileListActions } from '../actions/file-list-actions';
+import { EXPAND_COLLAPSE, OPEN_FILE, SELECT_FILE, RENAME_FILE, SET_RENAMING_FILE, CREATE_FILE, FileListActions } from '../actions/file-list-actions';
 import { CodeChangedLocalAction, CodeChangedRemoteAction, CODE_CHANGED_LOCAL, CODE_CHANGED_REMOTE } from '../actions/actions';
 import { Map, fromJS } from "immutable";
 import { update } from '../util/utils';
@@ -31,10 +31,7 @@ interface FileVague {
 
 export interface File extends FileVague {
     id: FileId,
-    isRoot: boolean,
     filename: string,
-    content: string,
-    children: FileId[]
 }
 
 interface FileListStateVague {
@@ -46,7 +43,8 @@ interface FileListStateVague {
 export interface FileListState {
     files: Map<FileId, File>,
     open: FileId,
-    selected: FileId
+    selected: FileId,
+    selectedParent: FileId
 }
 
 const dummyFiles: TreeFile[] = [
@@ -251,6 +249,11 @@ const sortChildrenOfFile = (state: FileListState, fileId: FileId): File => {
     return update(file, { children });
 }
 
+const sortChildrenOfFileInState = (state: FileListState, fileId: FileId): FileListState => {
+    const file = sortChildrenOfFile(state, fileId);
+    return updateFileInState(state, fileId, { children: file.children });
+}
+
 let filesFiles = Map<FileId, File>().withMutations((map) => {
     let nextId = 1;
 
@@ -260,7 +263,7 @@ let filesFiles = Map<FileId, File>().withMutations((map) => {
         const children = treeFile.children ? treeFile.children.map(mapTreeFileToFile) : [];
         const file: File = { id, isRoot: false, filename, isSelected, isDirectory, isExpanded, extension, content, children: treeFile.children ? treeFile.children.map(mapTreeFileToFile) : [] };
         map.set(id, file)
-        map.set(id, sortChildrenOfFile({ files: map, open: null, selected: null }, id))// fixme
+        map.set(id, sortChildrenOfFile({ files: map, open: null, selected: null, selectedParent: null }, id))// fixme
 
         return id;
     }
@@ -272,11 +275,11 @@ let filesFiles = Map<FileId, File>().withMutations((map) => {
         extension: null,
         filename: null,
         id: 0,
-        isDirectory: false,
+        isDirectory: true,
         isExpanded: false,
         isSelected: false,
     });
-    map.set(0, sortChildrenOfFile({ files: map, open: null, selected: null }, 0))// fixme
+    map.set(0, sortChildrenOfFile({ files: map, open: null, selected: null, selectedParent: null }, 0))// fixme
 });
 
 const updateFileInState = <K extends keyof File>(state: FileListState, fileId: FileId, fileUpdate: Pick<File, K>) => {
@@ -285,10 +288,10 @@ const updateFileInState = <K extends keyof File>(state: FileListState, fileId: F
     return update(state, { files: state.files.set(fileId, newFile) });
 }
 
-const dummyState: FileListState = { files: filesFiles, open: null, selected: null };
+const dummyState: FileListState = { files: filesFiles, open: null, selected: null, selectedParent: null };
 (window as any).zzz = dummyState;
 
-const reducer = (state = dummyState, action: FileListActions | CodeChangedLocalAction | CodeChangedRemoteAction) => {
+const reducer = (state = dummyState, action: FileListActions | CodeChangedLocalAction | CodeChangedRemoteAction): FileListState => {
     console.log(action);
     switch (action.type) {
         case EXPAND_COLLAPSE: {
@@ -301,7 +304,7 @@ const reducer = (state = dummyState, action: FileListActions | CodeChangedLocalA
         }
         case SELECT_FILE: {
             let { files, selected } = state;
-            let { fileId: newSelected } = action;
+            let { fileId: newSelected, parentFileId: newSelectedParentFileId } = action;
 
             if (selected) {
                 if (newSelected === selected) {
@@ -313,7 +316,7 @@ const reducer = (state = dummyState, action: FileListActions | CodeChangedLocalA
                 files = files.set(newSelected, update(files.get(newSelected), { isSelected: true }));
             }
 
-            return update(state, { files, selected: newSelected });
+            return update(state, { files, selected: newSelected, selectedParent: newSelectedParentFileId });
         }
         case RENAME_FILE: {
             const { fileId, filename } = action;
@@ -321,6 +324,35 @@ const reducer = (state = dummyState, action: FileListActions | CodeChangedLocalA
             const lastIndexOfDot = filename.lastIndexOf('.');
             const extension = lastIndexOfDot > 0/*not a bug we need to be > then 0*/ ? filename.substring(lastIndexOfDot + 1) : '';
             return updateFileInState(state, fileId, { filename, extension, isRenaming: false });
+        }
+        case CREATE_FILE: {
+            const { isDirectory } = action;
+            const { files, selectedParent, selected } = state;
+            const nextFileId = files.keySeq().max() + 1; //fixme potential 'overflow'
+            const selectedFileId = selected || 0;
+            const selectedFile = files.get(selectedFileId);
+            const parentFileId = selectedFile.isDirectory ? selectedFile.id : selectedParent;
+            const parentFile = files.get(parentFileId);
+
+            const newFile: File = {
+                id: nextFileId,
+                isDirectory,
+                filename: '',
+                isRenaming: true,
+                content: isDirectory ? undefined : '',
+                children: isDirectory ? [] : undefined
+            }
+            return updateFileInState(sortChildrenOfFileInState(
+                updateFileInState(
+                    update(
+                        state,
+                        { files: state.files.set(newFile.id, newFile) }
+                    ),
+                    parentFileId,
+                    { children: parentFile.children.concat(newFile.id) }
+                ),
+                parentFileId
+            ), parentFileId, { isExpanded: true });
         }
         case SET_RENAMING_FILE: {
             const { fileId, isRenaming } = action;

@@ -16,9 +16,10 @@ const styles = require("./file-list.css");
 
 const SelectableList = makeSelectable(List);
 
-interface FileListReduxProps {
-    rootFile: File,
-    selectedFile: File
+export interface FileListReduxProps {
+    rootFile?: File,
+    selectedFile?: File
+    onCreateNewFile?: (isDirectory: boolean) => void;
 }
 
 interface FilesListProps extends FileListReduxProps {
@@ -36,10 +37,10 @@ export class FileList extends React.Component<FilesListProps, FilesListState>{
                 <div className={styles['project-header']}>
                     <div className={styles['project-header-title']}>Project</div>
                     <div className={styles['project-header-buttons']}>
-                        <IconButton tooltip="New file" tooltipPosition="bottom-left">
+                        <IconButton tooltip="New file" tooltipPosition="bottom-left" onClick={() => { this.props.onCreateNewFile(false) }}>
                             <NoteAdd />
                         </IconButton>
-                        <IconButton tooltip="New folder" tooltipPosition="bottom-left">
+                        <IconButton tooltip="New folder" tooltipPosition="bottom-left" onClick={() => { this.props.onCreateNewFile(true) }}>
                             <CreateNewFolder />
                         </IconButton>
                     </div>
