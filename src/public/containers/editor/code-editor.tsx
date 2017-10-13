@@ -2,14 +2,13 @@ import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { SockscodeState } from '../../reducers/reducers';
 import { codeChanged } from '../../actions/actions'
-import { MonacoEditor } from '../../components/editor/monaco-editor';
-
+import { MonacoEditor, detectMonacoLanguage } from '../../components/editor/monaco-editor';
 
 const mapStateToProps = (state: SockscodeState) => {
     const { open } = state.fileList;
     if (open) {
         const file = state.fileList.files.get(open);
-        return { code: file.content };
+        return { code: file.content, language: detectMonacoLanguage(file) };
     }
 
     return { code: '' };
