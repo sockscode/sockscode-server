@@ -8,16 +8,16 @@ const mapStateToProps = (state: SockscodeState) => {
     const { open } = state.fileList;
     if (open) {
         const file = state.fileList.files.get(open);
-        return { code: file.content, language: detectMonacoLanguage(file) };
+        return { code: file.content, language: detectMonacoLanguage(file), fileId: open };
     }
 
-    return { code: '' };
+    return { code: '', fileId: null as number | null };
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<{}>) => {
     return {
-        onCodeChange: (code: string) => {
-            dispatch(codeChanged(code));
+        onCodeChange: (code: string, fileId: number) => {
+            dispatch(codeChanged(code, fileId));
         }
     }
 }

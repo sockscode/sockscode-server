@@ -6,7 +6,8 @@ const styles = require("./monaco-editor.css");
 interface MonacoEditorProps {
     language?: monaco.languages.ILanguageExtensionPoint
     code: string,
-    onCodeChange: (code: string) => void;
+    fileId: number | null,
+    onCodeChange: (code: string, fileId: number | null) => void;
 }
 
 interface MonacoEditorState {
@@ -50,7 +51,7 @@ export class MonacoEditor extends React.Component<MonacoEditorProps, MonacoEdito
                     this.skipNextChangeEvent = false;
                     return;
                 }
-                this.props.onCodeChange(this.monacoEditor.getModel().getValue());
+                this.props.onCodeChange(this.monacoEditor.getModel().getValue(), this.props.fileId);
             })
         });
     }

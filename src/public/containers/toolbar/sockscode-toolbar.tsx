@@ -5,7 +5,7 @@ import { Toolbar } from '../../components/toolbar/toolbar';
 import { createRoom, changedRoom, joinRoom } from '../../actions/actions';
 
 const mapStateToProps = (state: SockscodeState) => {
-    const { roomUuid } = state;
+    const { roomUuid } = state.roomState;
     return { roomUuid };
 }
 

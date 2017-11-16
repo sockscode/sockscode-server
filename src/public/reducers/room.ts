@@ -1,13 +1,23 @@
-import { CreatedRoomAction, CreateRoomAction, ChangedRoomAction, CHANGED_ROOM, CREATED_ROOM,  } from '../actions/actions';
+import { CreatedRoomAction, CreateRoomAction, ChangedRoomAction, JoinedRoomAction, CHANGED_ROOM, CREATED_ROOM, JOINED_ROOM } from '../actions/actions';
 
-const reducer = (state = '', action: CreatedRoomAction | CreateRoomAction | ChangedRoomAction) => {
+export interface IRoomState {
+    roomUuid?: string,
+    isMaster: boolean,
+    isConnected: boolean
+}
+
+const reducer = (state: IRoomState = { roomUuid: void 0, isMaster: false, isConnected: false }, action: CreatedRoomAction | CreateRoomAction | ChangedRoomAction | JoinedRoomAction) => {
     console.log(action);
     switch (action.type) {
-        case CREATED_ROOM: case CHANGED_ROOM:
-            return action.roomUuid;
+        case CHANGED_ROOM:
+            return Object.assign({}, state, { roomUuid: action.roomUuid });
+        case CREATED_ROOM:
+            return Object.assign({}, state, { roomUuid: action.roomUuid, isConnected: true, isMaster: true });
+        case JOINED_ROOM:
+            return Object.assign({}, state, { roomUuid: action.roomUuid, isConnected: true, isMaster: false });
         default:
             return state;
     }
 }
 
-export const roomUuid = reducer;
+export const roomState = reducer;

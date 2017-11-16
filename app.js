@@ -39,19 +39,34 @@ io.on('connection', (socket) => {
     leaveRoom();
     socket.roomUuid = roomUuid;
     socket.join(socket.roomUuid);
+    socket.emit('joined room', socket.roomUuid);
   })
 
-  socket.on('code change', (code) => {
+  socket.on('code change', (change/*{ code: string, filePath: string[] }*/) => {
     if (!isInitialized()) {
       return;
     }
 
     socket.broadcast.to(socket.roomUuid).emit('code change', {
       username: socket.username,
-      code: code
+      change: change
     });
   });
 
+  socket.on('request files structure', (code) => {
+    if (!isInitialized()) {
+      return;
+    }
+    socket.broadcast.to(socket.roomUuid).emit('request files structure');
+  });
+
+  socket.on('files structure', (files/*{children: TreeFile[]}*/) => {
+    if (!isInitialized()) {
+      return;
+    }
+    socket.broadcast.to(socket.roomUuid).emit('files structure', files);
+  });
+  
   socket.on('add user', (username) => {
     if (addedUser) return;
 
@@ -64,7 +79,7 @@ io.on('connection', (socket) => {
       username: socket.username
     });
   });
-
+/*
   // when the client emits 'typing', we broadcast it to others
   socket.on('typing', () => {
     socket.broadcast.to(socket.roomUuid).emit('typing', {
@@ -78,7 +93,7 @@ io.on('connection', (socket) => {
       username: socket.username
     });
   });
-
+  */
   // when the user disconnects perform this
   socket.on('disconnect', () => {
     if (false) { //TODO FIXME

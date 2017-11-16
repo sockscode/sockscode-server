@@ -1,7 +1,8 @@
 import { EXPAND_COLLAPSE, OPEN_FILE, SELECT_FILE, RENAME_FILE, SET_RENAMING_FILE, CREATE_FILE, REMOVE_FILE, FileListActions } from '../actions/file-list-actions';
-import { CodeChangedLocalAction, CodeChangedRemoteAction, CODE_CHANGED_LOCAL, CODE_CHANGED_REMOTE } from '../actions/actions';
+import { CodeChangedLocalAction, CodeChangedRemoteAction, LoadFilesStructureAction, CODE_CHANGED_LOCAL, CODE_CHANGED_REMOTE, LOAD_FILES_STRUCTURE } from '../actions/actions';
 import { Map } from "immutable";
 import { update } from '../util/utils';
+import * as LRU from 'lru-cache';
 
 export interface TreeFile {
     filename: string,
@@ -232,6 +233,75 @@ const dummyFiles: TreeFile[] = [
     }
 ];
 
+
+const pathCache = LRU<FileId, FileId[]>(100); //cache for most used path to files.
+export const getFullPath = (state: FileListState, fileId: FileId): FileId[] => {
+    const path = pathCache.get(fileId);
+    let currentFile = state.files.get(0);
+    if (!path.some((pathFileId) => { //check if cached path is still valid.
+        if (!currentFile) {
+            return true;
+        }
+        if (~currentFile.children.indexOf(pathFileId)) {
+            currentFile = state.files.get(pathFileId);
+        } else {
+            return true;
+        }
+    })) {
+        return path;
+    } else {
+        //dfs to find an file path.
+        let path: FileId[] = [];
+        const findChild = (currentFile: File, fileId: FileId) => {
+            const children = currentFile.children;
+            for (let i = 0; i < children[i]; i++) {
+                if (children[i] === fileId) {
+                    return true;
+                } else {
+                    if (findChild(state.files.get(children[i]), fileId)) {
+                        path.push(currentFile.id);
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+        if (findChild(state.files.get(0), fileId)) {
+            path = path.reverse().concat([fileId]);
+            pathCache.set(fileId, path);
+        } else {
+            //FIXME ?
+        }
+        return path;
+    }
+}
+
+export const getFullNamesPath = (state: FileListState, fileId: FileId) => {
+    return getFullPath(state, fileId).map((fileId)=>{
+        return state.files.get(fileId).filename;
+    });
+}
+
+//fixme caching just like for getFullPath
+export const findFileByFullNamesPath = (state: FileListState, filePath: string[]) => {
+    //fixme empty filePath?
+    let currentFile = state.files.get(0);
+    for (let i = 0; i < filePath.length; i++) {
+        const isDirectory = i !== (filePath.length - 1);
+        const filename = filePath[i];
+        const childId = currentFile.children.find((fileId) => {
+            const file = state.files.get(fileId);
+            return isDirectory === file.isDirectory && file.filename === filename;
+        });
+        if (!childId) {
+            return null;
+        }
+        currentFile = state.files.get(childId);
+    }
+    return currentFile === state.files.get(0) ? null : currentFile.id;
+}
+
+
 /**
  * Returns new File object with sorted children inside
  * 1. Directories go before files.
@@ -248,33 +318,37 @@ const sortChildrenOfFileInState = (state: FileListState, fileId: FileId): FileLi
     return updateFileInState(state, fileId, { children: file.children });
 }
 
-let filesFiles = Map<FileId, File>().withMutations((map) => {
-    let nextId = 1;
+const mapTreeFilesToFiles = (treeFiles: TreeFile[] = []) => {
+    let filesFiles = Map<FileId, File>().withMutations((map) => {
+        let nextId = 1;
 
-    const mapTreeFileToFile = (treeFile: TreeFile): number => {
-        const id = nextId++;
-        const { filename, isSelected, isDirectory, isExpanded, extension, content } = treeFile;
-        treeFile.children && treeFile.children.map(mapTreeFileToFile);
-        const file: File = { id, isRoot: false, filename, isSelected, isDirectory, isExpanded, extension, content, children: treeFile.children ? treeFile.children.map(mapTreeFileToFile) : [] };
-        map.set(id, file)
-        map.set(id, sortChildrenOfFile({ files: map, open: null, selected: null, selectedParent: null }, id))// fixme
+        const mapTreeFileToFile = (treeFile: TreeFile): number => {
+            const id = nextId++;
+            const { filename, isSelected, isDirectory, isExpanded, extension, content } = treeFile;
+            treeFile.children && treeFile.children.map(mapTreeFileToFile);
+            const file: File = { id, isRoot: false, filename, isSelected, isDirectory, isExpanded, extension, content, children: treeFile.children ? treeFile.children.map(mapTreeFileToFile) : [] };
+            map.set(id, file)
+            map.set(id, sortChildrenOfFile({ files: map, open: null, selected: null, selectedParent: null }, id))// fixme
 
-        return id;
-    }
+            return id;
+        }
 
-    map.set(0, {
-        isRoot: true,
-        children: dummyFiles.map(mapTreeFileToFile),
-        content: null,
-        extension: null,
-        filename: null,
-        id: 0,
-        isDirectory: true,
-        isExpanded: false,
-        isSelected: false,
+        map.set(0, {
+            isRoot: true,
+            children: treeFiles.map(mapTreeFileToFile),
+            content: null,
+            extension: null,
+            filename: null,
+            id: 0,
+            isDirectory: true,
+            isExpanded: false,
+            isSelected: false,
+        });
+        map.set(0, sortChildrenOfFile({ files: map, open: null, selected: null, selectedParent: null }, 0))// fixme
     });
-    map.set(0, sortChildrenOfFile({ files: map, open: null, selected: null, selectedParent: null }, 0))// fixme
-});
+
+    return filesFiles;
+}
 
 const updateFileInState = <K extends keyof File>(state: FileListState, fileId: FileId, fileUpdate: Pick<File, K>) => {
     const file = state.files.get(fileId);
@@ -282,10 +356,11 @@ const updateFileInState = <K extends keyof File>(state: FileListState, fileId: F
     return update(state, { files: state.files.set(fileId, newFile) });
 }
 
-const dummyState: FileListState = { files: filesFiles, open: null, selected: null, selectedParent: null };
+const dummyState: FileListState = { files: mapTreeFilesToFiles(process.env.USE_DUMMY ? dummyFiles : []), open: null, selected: null, selectedParent: null };
+
 (window as any).zzz = dummyState;
 
-const reducer = (state = dummyState, action: FileListActions | CodeChangedLocalAction | CodeChangedRemoteAction): FileListState => {
+const reducer = (state = dummyState, action: FileListActions | CodeChangedLocalAction | CodeChangedRemoteAction | LoadFilesStructureAction): FileListState => {
     console.log(action);
     switch (action.type) {
         case EXPAND_COLLAPSE: {
@@ -368,10 +443,13 @@ const reducer = (state = dummyState, action: FileListActions | CodeChangedLocalA
             return updateFileInState(state, fileId, { isRenaming });
         }
         case CODE_CHANGED_LOCAL: case CODE_CHANGED_REMOTE: {
-            const openFileId = state.open;
-            if (openFileId) {
-                return updateFileInState(state, openFileId, { content: action.code });
+            if (action.fileId) {
+                return updateFileInState(state, action.fileId, { content: action.code });
             }
+            break;
+        }
+        case LOAD_FILES_STRUCTURE: {
+            return Object.assign({ files: mapTreeFilesToFiles(action.files.children), open: null, selected: null, selectedParent: null })
         }
     }
     return state;
