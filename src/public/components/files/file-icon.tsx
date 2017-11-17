@@ -196,9 +196,13 @@ const getIconSrcByFile = (file: File) => {
     return iconsJSON.iconDefinitions[icon].iconPath;
 }
 
-let CustomIcon = (props: { file: File, [key: string]: string | File }) => {
+export interface ICustomIconProps {
+    file: File, [key: string]: string | File
+}
+
+let CustomIcon = (props: ICustomIconProps) => {
     const { file, ..._props } = props;
     return <img {..._props} src={getIconSrcByFile(file)} />;
 };
 
-export const FileIcon = pure(CustomIcon);
+export const FileIcon = pure<ICustomIconProps, typeof CustomIcon>(CustomIcon);

@@ -1,5 +1,6 @@
 import { EXPAND_COLLAPSE, OPEN_FILE, SELECT_FILE, RENAME_FILE, SET_RENAMING_FILE, CREATE_FILE, REMOVE_FILE, FileListActions } from '../actions/file-list-actions';
 import { CodeChangedLocalAction, CodeChangedRemoteAction, LoadFilesStructureAction, CODE_CHANGED_LOCAL, CODE_CHANGED_REMOTE, LOAD_FILES_STRUCTURE } from '../actions/actions';
+import { Reducer } from 'redux';
 import { Map } from "immutable";
 import { update } from '../util/utils';
 import * as LRU from 'lru-cache';
@@ -455,4 +456,4 @@ const reducer = (state = dummyState, action: FileListActions | CodeChangedLocalA
     return state;
 }
 
-export const fileList = reducer;
+export const fileList = reducer as Reducer<FileListState>;

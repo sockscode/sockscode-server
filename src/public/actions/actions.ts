@@ -1,5 +1,4 @@
 import { Action } from 'redux';
-import { SocketIoCodeService } from '../service/socket-io-code-service';
 import { TreeFile } from '../reducers/file-list';
 /*
  * action types
@@ -22,19 +21,19 @@ interface HasCode {
     code: string;
 }
 
-export interface CreateRoomAction {
+export interface CreateRoomAction extends Action {
     type: 'CREATE_ROOM';
 }
-export interface ChangedRoomAction extends HasRoomUuid {
+export interface ChangedRoomAction extends HasRoomUuid, Action {
     type: 'CHANGED_ROOM';
 }
-export interface CreatedRoomAction extends HasRoomUuid {
+export interface CreatedRoomAction extends HasRoomUuid, Action {
     type: 'CREATED_ROOM';
 }
-export interface JoinRoomAction extends HasRoomUuid {
+export interface JoinRoomAction extends HasRoomUuid, Action {
     type: 'JOIN_ROOM';
 }
-export interface JoinedRoomAction extends HasRoomUuid {
+export interface JoinedRoomAction extends HasRoomUuid, Action {
     type: 'JOINED_ROOM';
 }
 export interface CodeChangedLocalAction extends HasCode, Action {
@@ -45,7 +44,7 @@ export interface CodeChangedRemoteAction extends HasCode, Action {
     type: 'CODE_CHANGED_REMOTE';
     fileId: number;
 }
-export interface LoadFilesStructureAction {
+export interface LoadFilesStructureAction extends Action {
     type: 'LOAD_FILES_STRUCTURE',
     files: { children: TreeFile[] }
 }

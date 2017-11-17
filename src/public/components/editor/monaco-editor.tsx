@@ -58,6 +58,7 @@ export class MonacoEditor extends React.Component<MonacoEditorProps, MonacoEdito
 
     componentWillUnmount() {
         //destroying monaco editor
+        this.monacoOnDidChangeModelContent
     }
 
     componentDidUpdate(_prevProps: MonacoEditorProps, _prevState: MonacoEditorState) {

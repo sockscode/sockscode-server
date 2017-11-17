@@ -1,3 +1,4 @@
+import { Action } from 'redux';
 import { FileId } from '../reducers/file-list';
 /*
  * action types
@@ -10,7 +11,7 @@ export const SET_RENAMING_FILE = 'SET_RENAMING_FILE' as 'SET_RENAMING_FILE';
 export const CREATE_FILE = 'CREATE_FILE' as 'CREATE_FILE';
 export const REMOVE_FILE = 'REMOVE_FILE' as 'REMOVE_FILE';
 
-interface ActionWithFile {
+interface ActionWithFile extends Action {
     fileId: FileId
 }
 
@@ -37,12 +38,12 @@ export interface SetRenamingFileAction extends ActionWithFile {
     isRenaming: boolean;
 }
 
-export interface CreateFileAction {
+export interface CreateFileAction extends Action {
     type: typeof CREATE_FILE,
     isDirectory: boolean;
 }
 
-export interface RemoveFileAction {
+export interface RemoveFileAction extends Action {
     type: typeof REMOVE_FILE,
     fileId: FileId,
     parentFileId: FileId
