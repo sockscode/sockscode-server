@@ -7,17 +7,9 @@ export interface CodeChangeSocketData {
 }
 
 export interface CodeChangePartialSocketData { code: string, filePath: string[] }
+export interface LoadFileSocketData { filePath: string[] }
 
-export class SocketIoCodeService {
-    private static _instance: SocketIoCodeService = null;
-
-    public static get instance(): SocketIoCodeService {
-        if (!this._instance) {
-            this._instance = new SocketIoCodeService();
-        }
-        return this._instance;
-    }
-
+export class SocketIoCodeService {    
     private _io: typeof socketio.Socket;
 
     constructor() {
@@ -28,16 +20,16 @@ export class SocketIoCodeService {
         this._io.emit('code change', change);
     }
 
+    loadFile(loadFile: LoadFileSocketData) {
+        this._io.emit('load file', loadFile);
+    }
+
     createRoom() {
         this._io.emit('create room');
     }
 
     joinRoom(roomUuid: string) {
         this._io.emit('join room', roomUuid);
-    }
-
-    sendFileCode(fileUri: string, code: string) {
-        this._io.emit('file code', { fileUri, code });
     }
 
     sendFilesStructure(files: TreeFile[]) {
@@ -60,17 +52,17 @@ export class SocketIoCodeService {
         })
     }
 
-    onJoinedRoom(roomCreatedFunc: (roomUuid: string) => void) {
+    onJoinedRoom(joinedRoomFunc: (roomUuid: string) => void) {
         this._io.on('joined room', (roomUuid: string) => {
-            roomCreatedFunc(roomUuid);
+            joinedRoomFunc(roomUuid);
         })
     }
 
-    onFileOpenRequest(onFileOpenRequestFun: (fileUri: string) => void) {
-        this._io.on('request file code', (fileUri: string) => {
-            onFileOpenRequestFun(fileUri);
+    onLoadFile(onLoadFileFunc: (loadFile: LoadFileSocketData) => void) {
+        this._io.on('load file', (loadFile: LoadFileSocketData) => {
+            onLoadFileFunc(loadFile);
         })
-    }
+    }    
 
     onFilesStructureRequest(onFilesStructureRequest: () => void) {
         this._io.on('request files structure', () => {
@@ -91,5 +83,9 @@ export class SocketIoCodeService {
                 onDisconnectFunc(socket);
             });
         });
+    }
+
+    close() {
+        this._io.close();
     }
 }

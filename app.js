@@ -42,6 +42,14 @@ io.on('connection', (socket) => {
     socket.emit('joined room', socket.roomUuid);
   })
 
+  socket.on('load file', (loadFileSocketData) => {
+    if (!isInitialized()) {
+      return;
+    }
+
+    socket.broadcast.to(socket.roomUuid).emit('load file', loadFileSocketData);  
+  })
+
   socket.on('code change', (change/*{ code: string, filePath: string[] }*/) => {
     if (!isInitialized()) {
       return;

@@ -20,6 +20,7 @@ const normalizeIconsPath = () => {
 normalizeIconsPath();
 
 const extToLanguageMap = {
+    "md": "markdown",
     "as": "nextgenas",
     "ansible": "ansible",
     "any": "anyscript",

@@ -42,11 +42,12 @@ export interface CodeChangedLocalAction extends HasCode, Action {
 }
 export interface CodeChangedRemoteAction extends HasCode, Action {
     type: 'CODE_CHANGED_REMOTE';
-    fileId: number;
+    filePath: string[];
 }
 export interface LoadFilesStructureAction extends Action {
     type: 'LOAD_FILES_STRUCTURE',
-    files: { children: TreeFile[] }
+    files: { children: TreeFile[] },
+    remoteFiles: boolean
 }
 /*
  * action creators
@@ -75,11 +76,18 @@ export function codeChanged(code: string, fileId: number): CodeChangedLocalActio
     return { type: CODE_CHANGED_LOCAL, code, fileId };
 }
 
-export function remoteCodeChanged(code: string, fileId: number): CodeChangedRemoteAction {
-    return { type: CODE_CHANGED_REMOTE, code, fileId };
+export function remoteCodeChanged(code: string, filePath: string[]): CodeChangedRemoteAction {
+    return { type: CODE_CHANGED_REMOTE, code, filePath };
 }
 
-export function loadFilesStructure(files: { children: TreeFile[] }): LoadFilesStructureAction {
-    return { type: LOAD_FILES_STRUCTURE, files };
+/**
+ * 
+ * @param files 
+ * @param remoteFiles if true this files were loaded from remote master. 
+ */
+export function loadFilesStructure(files: { children: TreeFile[] }, remoteFiles: true): LoadFilesStructureAction {
+    return { type: LOAD_FILES_STRUCTURE, files, remoteFiles };
 }
+
+
 
