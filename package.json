@@ -1,6 +1,6 @@
 {
   "name": "sockscode-server",
-  "version": "0.0.1",
+  "version": "1.0.0-alpha",
   "description": "sockscode server",
   "main": "app.js",
   "scripts": {
