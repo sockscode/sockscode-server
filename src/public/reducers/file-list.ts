@@ -395,7 +395,8 @@ const createFileInState = ({ isDirectory, isRenaming, content, parentFile, state
         isRenaming: isRenaming,
         content: isDirectory ? undefined : content,
         children: isDirectory ? [] : undefined,
-        extension: isDirectory ? undefined : getExtension(filename)
+        extension: isDirectory ? undefined : getExtension(filename),
+        loaded: true
     }
     return {
         state: updateFileInState(sortChildrenOfFileInState(
