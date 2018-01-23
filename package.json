@@ -11,7 +11,7 @@
     "start-dev": "node webpack-dev-server"
   },
   "engines": {
-    "node": "^6.9.1"
+    "node": ">=6.9.1"
   },
   "author": "Shyyko Serhiy <shyyko.serhiy@gmail.com>",
   "license": "MIT",
